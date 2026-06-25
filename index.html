@@ -338,22 +338,25 @@ async function pullFromCloud(){
     if(res.ok){
       const data=await res.json();
       if(data&&data.staff!==undefined){ DB=migrate(data); try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){} _syncStatus='ok'; updateSyncBadge(); return true; }
+      // 雲端尚無資料（首次使用）：改為把本機資料上傳，並視為成功
+      _syncStatus='ok'; updateSyncBadge(); pushToCloud(); return false;
     }
     _syncStatus='error'; updateSyncBadge();
   }catch(e){ _syncStatus='error'; updateSyncBadge(); }
   return false;
 }
-function pushToCloud(){
+function pushToCloud(immediate){
   if(!WORKER_URL) return;
   clearTimeout(_syncTimer);
-  _syncTimer=setTimeout(async()=>{
+  const run=async()=>{
     _syncStatus='syncing'; updateSyncBadge();
     try{
       const res=await fetch(WORKER_URL+'/api/db',{method:'POST',headers:{'Content-Type':'application/json','X-Auth-Token':WORKER_SECRET},body:JSON.stringify(DB)});
       _syncStatus=res.ok?'ok':'error';
     }catch(e){ _syncStatus='error'; }
     updateSyncBadge();
-  },600);
+  };
+  if(immediate) run(); else _syncTimer=setTimeout(run,600);
 }
 function openCloudSettings(){
   openOv(
@@ -572,6 +575,7 @@ function wireSave(btnId){
     // ensure the focused field commits before saving
     if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
     save();
+    pushToCloud(true); // 點儲存即立即上傳雲端（不等待防抖）
     const html=b.innerHTML; b.classList.add('saved');
     b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>已儲存';
     setTimeout(()=>{ b.classList.remove('saved'); b.innerHTML=html; }, 1400);
@@ -1038,7 +1042,11 @@ let isAdmin=false;
 function boot(){
   const gate=document.getElementById('gate'), app=document.getElementById('adminApp');
   if(isAdmin){ gate.style.display='none'; app.style.display='flex'; render(); }
-  else{ app.style.display='none'; gate.style.display='block'; renderGate(); }
+  else{
+    app.style.display='none'; gate.style.display='block';
+    // 前台開啟時先拉雲端最新（同仁名單與班表），再顯示；打卡後 save() 會自動上傳
+    if(WORKER_URL){ pullFromCloud().then(()=>renderGate()); } else renderGate();
+  }
 }
 function openLogin(){
   openOv(
@@ -1066,6 +1074,8 @@ function openLogin(){
 document.getElementById('btnLogout').onclick=()=>{ isAdmin=false; boot(); };
 
 /* ============================== INIT ============================== */
+loadCloudConfig();
+updateSyncBadge();
 boot();
 </script>
 </body>
