@@ -79,6 +79,13 @@ input,select{font-family:inherit; font-size:13px}
 .btn:hover{border-color:var(--sky-100);color:var(--sky-700);background:var(--sky-50)}
 .btn.primary{background:linear-gradient(150deg,var(--sky),var(--sky-600));color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(2,132,199,.32)}
 .btn.primary:hover{filter:brightness(1.04);color:#fff}
+@keyframes lh-spin{to{transform:rotate(360deg)}}
+@keyframes lh-pop{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+#btnPull.syncing svg{animation:lh-spin .7s linear infinite;transform-origin:50% 50%}
+#btnPull.syncing{color:var(--sky-700);border-color:var(--sky-100);background:var(--sky-50)}
+#btnPull.ok{color:var(--ok);border-color:var(--ok);background:var(--ok-bg)}
+#btnPull.ok svg{animation:lh-pop .45s ease}
+#btnPull.bad{color:var(--bad);border-color:var(--bad);background:var(--bad-bg)}
 
 .wrap{padding:26px 28px 64px;max-width:1180px;width:100%}
 .head{margin:2px 0 20px}
@@ -355,25 +362,35 @@ function loadCloudConfig(){
 function saveCloudConfig(){ try{ localStorage.setItem('_cf_url',WORKER_URL); localStorage.setItem('_cf_sec',WORKER_SECRET); }catch(e){} }
 function updateSyncBadge(){
   const b=document.getElementById('syncBadge'); if(!b) return;
+  const btn=document.getElementById('btnPull');
+  if(btn){
+    btn.classList.toggle('syncing', _syncStatus==='syncing');
+    btn.classList.toggle('ok', _syncStatus==='ok');
+    btn.classList.toggle('bad', _syncStatus==='error');
+  }
   if(!WORKER_URL){ b.style.display='none'; return; }
   b.style.display='inline-flex';
   const map={ syncing:['b-warn','⟳ 同步中'], ok:['b-ok','✓ 已同步'], error:['b-bad','⚠ 失敗'], idle:['','☁ 雲端'] };
   const [cls,txt]=map[_syncStatus]||['',''];
   b.className='badge '+cls; b.textContent=txt;
 }
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 async function pullFromCloud(){
   if(!WORKER_URL) return false;
   _syncStatus='syncing'; updateSyncBadge();
+  const t0=Date.now();
+  const keepSpin=async()=>{ const w=450-(Date.now()-t0); if(w>0) await sleep(w); };
   try{
     const res=await fetch(WORKER_URL+'/api/db',{headers:{'X-Auth-Token':WORKER_SECRET}});
     if(res.ok){
       const data=await res.json();
+      await keepSpin();
       if(data&&data.staff!==undefined){ DB=migrate(data); try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){} _syncStatus='ok'; updateSyncBadge(); return true; }
       // 雲端尚無資料（首次使用）：改為把本機資料上傳，並視為成功
       _syncStatus='ok'; updateSyncBadge(); pushToCloud(); return false;
     }
-    _syncStatus='error'; updateSyncBadge();
-  }catch(e){ _syncStatus='error'; updateSyncBadge(); }
+    await keepSpin(); _syncStatus='error'; updateSyncBadge();
+  }catch(e){ await keepSpin(); _syncStatus='error'; updateSyncBadge(); }
   return false;
 }
 function pushToCloud(immediate){
@@ -381,10 +398,12 @@ function pushToCloud(immediate){
   clearTimeout(_syncTimer);
   const run=async()=>{
     _syncStatus='syncing'; updateSyncBadge();
+    const t0=Date.now();
     try{
       const res=await fetch(WORKER_URL+'/api/db',{method:'POST',headers:{'Content-Type':'application/json','X-Auth-Token':WORKER_SECRET},body:JSON.stringify(DB)});
+      const w=450-(Date.now()-t0); if(w>0) await sleep(w);
       _syncStatus=res.ok?'ok':'error';
-    }catch(e){ _syncStatus='error'; }
+    }catch(e){ const w=450-(Date.now()-t0); if(w>0) await sleep(w); _syncStatus='error'; }
     updateSyncBadge();
   };
   if(immediate) run(); else _syncTimer=setTimeout(run,600);
@@ -448,10 +467,12 @@ function punchHours(p){
 function punchOT(p){ const h=punchHours(p); if(isHoliday(p.date)) return 0; return h>8?r1(h-8):0; }
 function punchHol(p){ return isHoliday(p.date)?punchHours(p):0; }
 function bonusCalc(b){
-  const per = b.product==='Google 5星好評' ? 0 : productBonus(b.product);
-  const sub = (Number(b.qty)||0)*per;
-  const perRev = (Number(b.reviews)||0)>0 ? (Number(DB.params.googleReview)||0) : 0;
-  const rev = (Number(b.reviews)||0)*perRev;
+  const isReview = b.product==='Google 5星好評';
+  const per = isReview ? 0 : productBonus(b.product);
+  const sub = isReview ? 0 : (Number(b.qty)||0)*per;
+  const reviews = isReview ? (Number(b.reviews)||0) : 0;
+  const perRev = reviews>0 ? (Number(DB.params.googleReview)||0) : 0;
+  const rev = reviews*perRev;
   return {per,sub,perRev,rev,total:sub+rev};
 }
 function scheduleLeave(name){
@@ -475,7 +496,7 @@ function payrollFor(s){
   const voided = isPartTime(s) || scheduleLeave(s.name) || warn;
   const perfect = voided ? 0 : (Number(s.perfect)||0);
   let prodSub=0, rev=0, reviews=0, bonusTotal=0;
-  bs.forEach(b=>{ const c=bonusCalc(b); prodSub+=c.sub; rev+=c.rev; reviews+=(Number(b.reviews)||0); bonusTotal+=c.total; });
+  bs.forEach(b=>{ const c=bonusCalc(b); prodSub+=c.sub; rev+=c.rev; reviews+=(b.product==='Google 5星好評'?(Number(b.reviews)||0):0); bonusTotal+=c.total; });
   const insurance=Number(s.insurance)||0;
   const net = base+otPay+holPay-leaveDeduct+perfect+bonusTotal-insurance;
   return {total,reg,ot,hol,base,otPay,holPay,leaveDeduct,perfect,voided,warn,prodSub,rev,reviews,bonusTotal,insurance,net};
@@ -515,6 +536,12 @@ function head(eyebrow,title,desc){
 const V=()=>document.getElementById('view');
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function staffOpts(sel){ return DB.staff.map(s=>'<option '+(s.name===sel?'selected':'')+'>'+esc(s.name)+'</option>').join(''); }
+function staffSelect(sel){
+  let opts=DB.staff.map(s=>'<option '+(s.name===sel?'selected':'')+'>'+esc(s.name)+'</option>').join('');
+  if(sel && !DB.staff.some(s=>s.name===sel)) opts='<option selected>'+esc(sel)+'</option>'+opts;
+  if(!DB.staff.length && !sel) opts='<option value="">（請先新增同仁）</option>';
+  return opts;
+}
 
 /* ============================== VIEW: DASHBOARD ============================== */
 function viewDashboard(){
@@ -802,18 +829,26 @@ function renderGate(){
 }
 
 /* ============================== VIEW: PUNCH ============================== */
+function manualOpts(sel){
+  const s=(sel===''||sel==null)?'':String(sel);
+  let o='<option value=""'+(s===''?' selected':'')+'>—（自動）</option>';
+  let found=false;
+  for(let i=1;i<=24;i++){ const v=String(i/2); const on=(s===v); if(on) found=true; o+='<option value="'+v+'"'+(on?' selected':'')+'>'+v+' 小時</option>'; }
+  if(s!=='' && !found){ o+='<option value="'+esc(s)+'" selected>'+esc(s)+' 小時（自訂）</option>'; }
+  return o;
+}
 function viewPunch(){
   const rows=DB.punches.map((p,i)=>{
     const h=punchHours(p), ot=punchOT(p), hol=punchHol(p); const ho=isHoliday(p.date);
     return '<tr data-i="'+i+'">'+
       '<td><input class="cell-in" data-k="date" value="'+esc(p.date)+'" style="width:108px">'+(ho?'<div style="margin-top:3px"><span class="badge b-bad">'+esc(holidayName(p.date))+'</span></div>':'')+'</td>'+
-      '<td><select class="cell-in" data-k="staff">'+staffOpts(p.staff)+'</select></td>'+
+      '<td><select class="cell-in" data-k="staff">'+staffSelect(p.staff)+'</select></td>'+
       '<td><select class="cell-in" data-k="shift" style="width:80px">'+SHIFT_OPTS.map(o=>'<option '+(o===p.shift?'selected':'')+'>'+o+'</option>').join('')+'</select></td>'+
       '<td><input class="cell-in" data-k="in1" type="time" value="'+esc(p.in1)+'" style="width:120px"></td>'+
       '<td><input class="cell-in" data-k="out1" type="time" value="'+esc(p.out1)+'" style="width:120px"></td>'+
       '<td><input class="cell-in" data-k="in2" type="time" value="'+esc(p.in2)+'" style="width:120px"></td>'+
       '<td><input class="cell-in" data-k="out2" type="time" value="'+esc(p.out2)+'" style="width:120px"></td>'+
-      '<td><input class="cell-in" data-k="manual" type="number" step="0.5" min="0" value="'+esc(p.manual)+'" placeholder="—" title="以 0.5 小時為單位" style="width:64px;text-align:right"></td>'+
+      '<td><select class="cell-in" data-k="manual" title="留白（自動）＝以打卡時間計算" style="width:104px">'+manualOpts(p.manual)+'</select></td>'+
       '<td><select class="cell-in" data-k="status" style="width:108px">'+['正常','遲到','早退','遲到+早退','缺勤異常'].map(o=>'<option '+(o===p.status?'selected':'')+'>'+o+'</option>').join('')+'</select></td>'+
       '<td class="num ro tnum">'+h+'</td>'+
       '<td class="num tnum">'+(ot?'<span class="badge b-warn">'+ot+'</span>':'0')+'</td>'+
@@ -823,7 +858,7 @@ function viewPunch(){
 
   V().innerHTML =
     head('Time Clock','每日打卡紀錄表','輸入四段打卡時間自動算工時；或於「主管覆核」欄直接填入時數覆蓋。國定假日工時自動歸入假日加倍計算。')+
-    '<div class="note">「最終工時」優先採用主管覆核欄位的數字；留白時才以打卡時間自動計算。<b>覆核欄以 0.5 小時為單位</b>（例如 0.5、1、1.5…），填入後自動對齊半小時。當日若為國定假日，全部工時計入<b>國定假日工時</b>（不另計平日加班）。</div>'+
+    '<div class="note">「最終工時」優先採用主管覆核欄位的數字；選「—（自動）」時才以打卡時間自動計算。<b>覆核欄為下拉選單，0.5～12 小時、每 0.5 小時一級</b>。當日若為國定假日，全部工時計入<b>國定假日工時</b>（不另計平日加班）。</div>'+
     '<div class="card"><div class="ch"><h3>打卡明細</h3><div class="spacer"></div><span class="hint">僅顯示 '+DB.schedule.year+'/'+pad2(DB.schedule.month)+' 之外亦可記錄；薪資結算只計當月</span>'+saveBtnHTML('savePunch')+'</div>'+
     '<div class="cb flush scroll"><table class="tbl"><thead><tr>'+
       '<th>日期</th><th>員工</th><th>班別</th><th>上班1</th><th>下班1</th><th>上班2</th><th>下班2</th><th class="num">覆核</th><th>考勤狀態</th><th class="num">最終工時</th><th class="num">平日加班</th><th class="num">國定假日</th><th></th>'+
@@ -847,10 +882,10 @@ function viewBonus(){
     const c=bonusCalc(b);
     return '<tr data-i="'+i+'">'+
       '<td><input class="cell-in" data-k="date" value="'+esc(b.date)+'" style="width:108px"></td>'+
-      '<td><select class="cell-in" data-k="staff">'+staffOpts(b.staff)+'</select></td>'+
+      '<td><select class="cell-in" data-k="staff" style="min-width:120px">'+staffSelect(b.staff)+'</select></td>'+
       '<td><select class="cell-in" data-k="product" style="min-width:200px">'+selOpts(opts,b.product)+'</select></td>'+
-      '<td class="num"><input class="cell-in" data-k="qty" type="number" value="'+(b.qty||0)+'" style="width:62px;text-align:right"></td>'+
-      '<td class="num"><input class="cell-in" data-k="reviews" type="number" value="'+(b.reviews||0)+'" style="width:62px;text-align:right"></td>'+
+      '<td class="num">'+(b.product==='Google 5星好評'?'<span class="muted">—</span>':'<input class="cell-in" data-k="qty" type="number" min="0" value="'+(b.qty||0)+'" style="width:62px;text-align:right">')+'</td>'+
+      '<td class="num">'+(b.product==='Google 5星好評'?'<input class="cell-in" data-k="reviews" type="number" min="0" value="'+(b.reviews||0)+'" style="width:62px;text-align:right">':'<span class="muted">—</span>')+'</td>'+
       '<td class="num tnum muted">'+fmt(c.per)+'</td>'+
       '<td class="num tnum">'+fmt(c.sub)+'</td>'+
       '<td class="num tnum">'+fmt(c.rev)+'</td>'+
