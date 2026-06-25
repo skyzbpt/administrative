@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>領航物理治療所 · 行政櫃檯管理系統</title>
+<style>
+:root{
+  --bg:#f4f9fc; --surface:#ffffff; --ink:#0e2433; --muted:#5d758a; --faint:#9cb2c3;
+  --line:#e4eef4; --line-2:#eef5f9;
+  --sky:#0ea5e9; --sky-600:#0284c7; --sky-700:#036aa1; --sky-50:#eef8fe; --sky-100:#dcf1fd;
+  --ok:#15a34a; --ok-bg:#e9f8ef; --warn:#c97a06; --warn-bg:#fdf2e1; --bad:#d6342c; --bad-bg:#fdecea;
+  --radius:14px; --shadow:0 1px 2px rgba(14,36,51,.04),0 6px 22px rgba(14,36,51,.05);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Microsoft JhengHei","Noto Sans TC","Segoe UI",sans-serif;
+  font-size:14px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit; cursor:pointer}
+input,select{font-family:inherit; font-size:13px}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* ---------- App frame ---------- */
+.app{display:flex; min-height:100vh}
+.side{
+  width:228px; flex:0 0 228px; background:var(--surface); border-right:1px solid var(--line);
+  position:sticky; top:0; height:100vh; display:flex; flex-direction:column; padding:18px 14px;
+}
+.brand{display:flex; align-items:center; gap:11px; padding:6px 8px 18px}
+.brand .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(150deg,var(--sky),var(--sky-700));
+  display:grid;place-items:center;box-shadow:0 4px 12px rgba(2,132,199,.28);flex:0 0 auto}
+.brand .mark svg{width:22px;height:22px}
+.brand .t1{font-weight:700;font-size:15px;letter-spacing:.3px;line-height:1.2}
+.brand .t2{font-size:11.5px;color:var(--faint);letter-spacing:.5px;font-weight:600}
+.nav{display:flex;flex-direction:column;gap:3px;margin-top:4px}
+.nav button{
+  display:flex;align-items:center;gap:11px;width:100%;border:0;background:transparent;color:var(--muted);
+  padding:10px 12px;border-radius:10px;font-size:13.5px;font-weight:600;text-align:left;letter-spacing:.2px;
+  position:relative;transition:.15s;
+}
+.nav button svg{width:18px;height:18px;flex:0 0 auto;opacity:.85}
+.nav button:hover{background:var(--sky-50);color:var(--sky-700)}
+.nav button.on{background:var(--sky-50);color:var(--sky-700)}
+.nav button.on::before{content:"";position:absolute;left:-14px;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:var(--sky-600)}
+.side .foot{margin-top:auto;padding:10px 8px 0;font-size:11px;color:var(--faint);line-height:1.5}
+.side .foot b{color:var(--muted)}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{
+  position:sticky;top:0;z-index:20;background:rgba(244,249,252,.86);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);padding:13px 28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.topbar .crumb{font-size:13px;color:var(--muted);font-weight:600}
+.topbar .crumb b{color:var(--ink)}
+.topbar .spacer{flex:1}
+.monthpill{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);
+  border-radius:10px;padding:6px 8px 6px 12px;box-shadow:var(--shadow)}
+.monthpill label{font-size:12px;color:var(--faint);font-weight:700;letter-spacing:.5px}
+.monthpill input{width:62px;border:0;background:var(--line-2);border-radius:7px;padding:5px 8px;text-align:center;font-weight:700;color:var(--sky-700)}
+.monthpill .sep{color:var(--faint)}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:10px;
+  padding:8px 13px;font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:7px;box-shadow:var(--shadow);transition:.15s}
+.btn svg{width:15px;height:15px}
+.btn:hover{border-color:var(--sky-100);color:var(--sky-700);background:var(--sky-50)}
+.btn.primary{background:linear-gradient(150deg,var(--sky),var(--sky-600));color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(2,132,199,.32)}
+.btn.primary:hover{filter:brightness(1.04);color:#fff}
+
+.wrap{padding:26px 28px 64px;max-width:1180px;width:100%}
+.head{margin:2px 0 20px}
+.eyebrow{font-size:11.5px;font-weight:800;letter-spacing:2px;color:var(--sky-600);text-transform:uppercase}
+.head h2{margin:5px 0 0;font-size:23px;font-weight:800;letter-spacing:.4px}
+.head p{margin:6px 0 0;color:var(--muted);font-size:13.5px;max-width:740px}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+.card .ch{display:flex;align-items:center;gap:10px;padding:15px 18px;border-bottom:1px solid var(--line-2)}
+.card .ch h3{margin:0;font-size:14.5px;font-weight:800;letter-spacing:.3px}
+.card .ch .hint{font-size:12px;color:var(--faint);font-weight:600}
+.card .ch .spacer{flex:1}
+.card .cb{padding:16px 18px}
+.card .cb.flush{padding:0}
+
+/* ---------- Tables ---------- */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{font-size:11px;font-weight:800;letter-spacing:.6px;color:var(--faint);text-transform:uppercase;
+  text-align:left;padding:11px 12px;background:var(--sky-50);border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--line-2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tbody tr:hover{background:var(--sky-50)}
+.tbl td.num,.tbl th.num{text-align:right;font-variant-numeric:tabular-nums}
+.tbl .total td{background:var(--sky-100);font-weight:800;color:var(--sky-700);border-top:2px solid var(--sky)}
+.tbl .total tr:hover{background:var(--sky-100)}
+.scroll{overflow-x:auto}
+.cell-in{width:100%;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:#fff;color:var(--ink)}
+.cell-in:focus{outline:0;border-color:var(--sky);box-shadow:0 0 0 3px var(--sky-50)}
+select.cell-in{cursor:pointer}
+.ro{color:var(--ink);font-weight:700}
+.muted{color:var(--muted)}
+.del{border:0;background:transparent;color:var(--faint);width:28px;height:28px;border-radius:8px;font-size:16px;line-height:1}
+.del:hover{background:var(--bad-bg);color:var(--bad)}
+
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.3px;white-space:nowrap}
+.b-ok{background:var(--ok-bg);color:var(--ok)} .b-warn{background:var(--warn-bg);color:var(--warn)} .b-bad{background:var(--bad-bg);color:var(--bad)}
+
+/* ---------- KPI ---------- */
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px;position:relative;overflow:hidden}
+.kpi::after{content:"";position:absolute;left:20px;right:20px;bottom:0;height:3px;border-radius:3px 3px 0 0;background:linear-gradient(90deg,var(--sky),var(--sky-100))}
+.kpi .lab{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+.kpi .lab svg{width:16px;height:16px;color:var(--sky-600)}
+.kpi .val{font-size:30px;font-weight:800;letter-spacing:.5px;margin-top:8px;color:var(--sky-700);font-variant-numeric:tabular-nums}
+.kpi .val small{font-size:14px;font-weight:700;color:var(--faint);margin-right:3px}
+.kpi .sub{font-size:12px;color:var(--faint);margin-top:3px}
+
+/* ---------- Param blocks ---------- */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.miniform{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+.fld{display:flex;flex-direction:column;gap:5px}
+.fld label{font-size:11px;font-weight:800;color:var(--faint);letter-spacing:.5px}
+.fld input,.fld select{border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:#fff}
+.fld input:focus,.fld select:focus{outline:0;border-color:var(--sky);box-shadow:0 0 0 3px var(--sky-50)}
+.prodsearch{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 12px;background:#fff;margin-bottom:0}
+.prodsearch:focus{outline:0;border-color:var(--sky);box-shadow:0 0 0 3px var(--sky-50)}
+.prodlist{max-height:330px;overflow:auto}
+
+/* ---------- Schedule grid ---------- */
+.sched{border-collapse:collapse;font-size:12px;white-space:nowrap}
+.sched th,.sched td{border:1px solid var(--line-2);padding:0;text-align:center}
+.sched th{background:var(--sky-50);font-weight:800;color:var(--muted);padding:6px 4px;font-size:11px;position:sticky;top:0}
+.sched th.we{color:var(--sky-700)} .sched th.ho{background:var(--bad-bg);color:var(--bad)}
+.sched .nm{position:sticky;left:0;background:#fff;font-weight:700;text-align:left;padding:7px 12px;min-width:138px;z-index:2;border-right:2px solid var(--line)}
+.sched th.nm{z-index:3}
+.sched td.day select{border:0;background:transparent;width:42px;text-align:center;padding:8px 0;font-weight:700;color:var(--ink);appearance:none;cursor:pointer}
+.sched td.day select:focus{outline:0;background:var(--sky-50)}
+.sched td.ho{background:var(--bad-bg)}
+.sched td.we{background:#f4fbff}
+.sched td.tot{background:#fff;font-weight:800;color:var(--sky-700);min-width:78px;font-variant-numeric:tabular-nums;border-left:2px solid var(--line)}
+.sched .chk td{background:var(--sky-50);font-size:11px;font-weight:700;padding:6px 2px}
+.sched .chk .nm{background:var(--sky-50)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);padding:2px 2px 0}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:9px;height:9px;border-radius:3px;display:inline-block}
+
+/* ---------- Payslip ---------- */
+.slip{max-width:620px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.slip .sh{background:linear-gradient(150deg,var(--sky),var(--sky-700));color:#fff;padding:20px 24px;display:flex;align-items:center;justify-content:space-between}
+.slip .sh .l1{font-size:12px;letter-spacing:2px;font-weight:700;opacity:.85}
+.slip .sh .l2{font-size:18px;font-weight:800;margin-top:3px}
+.slip .sh .r{text-align:right;font-size:12px;opacity:.92}
+.slip .sb{padding:22px 24px}
+.slip .meta{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;padding-bottom:16px;border-bottom:1px dashed var(--line);margin-bottom:16px}
+.slip .meta div{font-size:13px} .slip .meta b{color:var(--faint);font-weight:700;font-size:11.5px;letter-spacing:.5px;display:block;margin-bottom:2px}
+.slip .two{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.slip .col h4{margin:0 0 9px;font-size:12px;font-weight:800;letter-spacing:.5px;padding-bottom:7px;border-bottom:2px solid var(--line-2)}
+.slip .col.pos h4{color:var(--ok)} .slip .col.neg h4{color:var(--bad)}
+.slip .li{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid var(--line-2)}
+.slip .li span:last-child{font-weight:700;font-variant-numeric:tabular-nums}
+.slip .net{margin-top:18px;background:var(--sky-50);border:1px solid var(--sky-100);border-radius:11px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
+.slip .net .lab{font-size:13px;font-weight:800;color:var(--sky-700);letter-spacing:.5px}
+.slip .net .v{font-size:26px;font-weight:800;color:var(--sky-700);font-variant-numeric:tabular-nums}
+.slip .sign{margin-top:20px;padding-top:16px;border-top:1px dashed var(--line);display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;font-size:12.5px;color:var(--muted)}
+.slip .sign .ln{margin-top:14px;border-bottom:1px solid var(--ink);height:1px}
+
+.empty{padding:34px;text-align:center;color:var(--faint);font-size:13px}
+.note{font-size:12.5px;color:var(--muted);background:var(--sky-50);border:1px solid var(--sky-100);border-radius:10px;padding:11px 14px;margin-bottom:4px;line-height:1.6}
+.note b{color:var(--sky-700)}
+.addbtn{border:1px dashed var(--sky-100);background:var(--sky-50);color:var(--sky-700);border-radius:10px;padding:9px 14px;font-weight:800;font-size:13px;display:inline-flex;align-items:center;gap:7px}
+.addbtn:hover{background:var(--sky-100)}
+.addbtn svg{width:15px;height:15px}
+.btn.sm{padding:7px 12px;font-size:12.5px}
+.btn.savebtn{background:var(--sky);color:#fff;border-color:var(--sky)}
+.btn.savebtn:hover{background:var(--sky-600)}
+.btn.savebtn.saved{background:var(--ok);border-color:var(--ok)}
+.btn.savebtn svg{width:15px;height:15px}
+
+@media(max-width:920px){
+  .side{position:fixed;bottom:0;top:auto;left:0;right:0;width:auto;height:auto;flex-direction:row;border-right:0;border-top:1px solid var(--line);padding:8px;z-index:50;overflow-x:auto}
+  .brand,.side .foot{display:none}
+  .nav{flex-direction:row;gap:4px}
+  .nav button{flex-direction:column;gap:3px;font-size:10px;padding:7px 9px;white-space:nowrap}
+  .nav button.on::before{display:none}
+  #btnLogout{flex:0 0 auto;margin:0 0 0 4px;padding:7px 10px;font-size:11px;white-space:nowrap;align-self:center}
+  .main{padding-bottom:74px}
+  .wrap{padding:18px 14px 40px}
+  .topbar{padding:11px 14px}
+  .kpis,.pgrid{grid-template-columns:1fr}
+  .slip .two,.slip .meta{grid-template-columns:1fr}
+}
+@media print{
+  *{ -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important }
+  .side,.topbar,.head,.no-print{display:none!important}
+  .app{display:block!important} .main{display:block!important}
+  .wrap{display:block!important;padding:0!important;margin:0!important;max-width:none!important;width:auto!important}
+  #view>.card,.card.no-print{display:none!important}
+  #view .slip{display:block!important;max-width:none!important;width:100%!important;margin:0!important;border:none!important;box-shadow:none!important;border-radius:0!important}
+  body{background:#fff!important}
+  @page{ margin:14mm }
+}
+/* ---- kiosk (front-desk punch) ---- */
+.kio{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.kcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 18px 16px;display:flex;flex-direction:column}
+.kcard .kh{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px}
+.kcard .kname{font-size:18px;font-weight:800;color:var(--ink)}
+.kcard .kshift{font-size:12px;color:var(--muted);font-weight:700}
+.kslots{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.kslot{border:1px solid var(--line-2);border-radius:10px;padding:8px 10px;background:var(--sky-50)}
+.kslot .l{font-size:11px;color:var(--faint);font-weight:700;letter-spacing:.3px}
+.kslot .t{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:2px;color:var(--faint)}
+.kslot.done{background:var(--ok-bg);border-color:var(--ok)}
+.kslot.done .t{color:var(--ok)}
+.kbtn{width:100%;border:0;border-radius:11px;padding:14px;font-size:16px;font-weight:800;color:#fff;background:linear-gradient(150deg,var(--sky),var(--sky-700));cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.kbtn:active{transform:translateY(1px)}
+.kbtn[disabled]{background:var(--line);color:var(--faint);cursor:default}
+.kbtn svg{width:18px;height:18px}
+.kclock{display:flex;align-items:center;gap:16px;background:linear-gradient(150deg,var(--sky),var(--sky-700));color:#fff;border-radius:var(--radius);padding:16px 22px;margin-bottom:18px;box-shadow:var(--shadow)}
+.kclock .time{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:1px;line-height:1}
+.kclock .date{font-size:13px;opacity:.92;font-weight:600}
+.kclock .ho{margin-left:auto;background:rgba(255,255,255,.18);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700}
+@media(max-width:560px){ .kclock .time{font-size:28px} }
+/* ---- public gate (front desk) ---- */
+.gatewrap{min-height:100vh;display:flex;flex-direction:column;background:var(--bg)}
+.gatebar{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.gbrand{display:flex;align-items:center;gap:12px}
+.gbrand .mark{width:42px;height:42px;border-radius:12px;background:linear-gradient(150deg,var(--sky),var(--sky-700));display:flex;align-items:center;justify-content:center}
+.gbrand .mark svg{width:24px;height:24px}
+/* logo hidden for now */
+.brand .mark,.gbrand .mark{display:none}
+.gbrand .t1{font-weight:800;font-size:17px;color:var(--ink);line-height:1.2}
+.gbrand .t2{font-size:12px;color:var(--faint);font-weight:600;letter-spacing:.5px}
+.gatebody{flex:1;width:100%;max-width:1100px;margin:0 auto;padding:24px 22px 48px}
+.gatefoot{margin-top:24px;font-size:12.5px;color:var(--faint);text-align:center;line-height:1.6}
+.login .fld{margin-bottom:13px}
+.login label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:5px}
+.login input{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 13px;font-size:15px;color:var(--ink);background:#fff}
+.login input:focus{outline:none;border-color:var(--sky);box-shadow:0 0 0 3px var(--sky-100)}
+.login .err{color:var(--bad);font-size:12.5px;font-weight:700;min-height:16px;margin-top:2px}
+/* ---- backup modal ---- */
+.ov{position:fixed;inset:0;background:rgba(14,36,51,.46);display:flex;align-items:center;justify-content:center;z-index:1000;padding:18px}
+.ov .box{background:#fff;border-radius:16px;box-shadow:0 18px 60px rgba(14,36,51,.28);width:100%;max-width:520px;max-height:90vh;overflow:auto;padding:22px 22px 20px}
+.ov h3{margin:0 0 4px;font-size:17px;font-weight:800;color:var(--ink)}
+.ov p{margin:0 0 14px;font-size:13px;color:var(--muted);line-height:1.6}
+.ov textarea{width:100%;height:150px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ink);resize:vertical;background:var(--sky-50)}
+.ov .row{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.ov .row .btn{flex:1;min-width:120px;justify-content:center}
+.btn.cfdanger{background:var(--bad);color:#fff;border-color:var(--bad)}
+.btn.cfdanger:hover{filter:brightness(1.06);color:#fff}
+.ov .x{float:right;cursor:pointer;color:var(--faint);font-size:20px;line-height:1;border:0;background:none;padding:0}
+.ov .ok{font-size:12.5px;color:var(--ok);font-weight:700;margin-top:9px;min-height:16px}
+</style>
+</head>
+<body>
+<div id="gate"></div>
+<div class="app" id="adminApp" style="display:none">
+  <aside class="side">
+    <div class="brand">
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 14c2.2 0 2.2-2.6 4.4-2.6S8.6 14 10.8 14 13 11.4 15.2 11.4 17.4 14 19.6 14 22 11.4 22 11.4"/><path d="M2 18.4c2.2 0 2.2-2.6 4.4-2.6s2.2 2.6 4.4 2.6 2.2-2.6 4.4-2.6 2.2 2.6 4.4 2.6"/><path d="M12 3l2.2 4.4L19 8l-3.4 3.1.9 4.9-4.5-2.5"/></svg></div>
+      <div><div class="t1">領航物理治療所</div><div class="t2">行政後台</div></div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <button class="btn" id="btnLogout" style="margin:6px 4px 10px;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>登出 / 回前台</button>
+    <div class="foot"><b>本機儲存</b>　所有資料僅存於此瀏覽器，請定期「匯出備份」。</div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="crumb" id="crumb"></div>
+      <div class="spacer"></div>
+      <div class="monthpill">
+        <label>結算月份</label>
+        <input type="number" id="topYear" min="2000" max="2100">
+        <span class="sep">年</span>
+        <input type="number" id="topMonth" min="1" max="12">
+        <span class="sep">月</span>
+      </div>
+      <span id="syncBadge" class="badge" style="display:none"></span>
+      <button class="btn" id="btnPull"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M3 21v-5h5"/></svg>雲端同步</button>
+      <button class="btn" id="btnCloudSettings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>雲端設定</button>
+      <button class="btn" id="btnExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>匯出備份</button>
+      <button class="btn" id="btnImport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></svg>匯入</button>
+      <input type="file" id="fileImport" accept="application/json" style="display:none">
+    </div>
+    <div class="wrap"><div id="view"></div></div>
+  </div>
+</div>
+
+<script>
+/* ============================== SEED ============================== */
+const SEED_PRODUCTS = [{"name": "仁術-筋膜按壓器（藍）", "bonus": 19}, {"name": "仁術-筋膜按壓器（綠）", "bonus": 19}, {"name": "仁術-筋膜球（藍）", "bonus": 19}, {"name": "仁術-筋膜球（粉）", "bonus": 19}, {"name": "艾羅力-滾筒（藍45）", "bonus": 54}, {"name": "艾羅力-滾筒（藍90）", "bonus": 94}, {"name": "小黑豹-滾筒", "bonus": 50}, {"name": "星星相挺-坐墊（黑）", "bonus": 82}, {"name": "星星相挺-坐墊（藍綠）", "bonus": 82}, {"name": "小樂浪-筋膜球（藍）", "bonus": 18}, {"name": "小樂浪-筋膜球（綠）", "bonus": 18}, {"name": "小樂浪-筋膜球（灰）", "bonus": 18}, {"name": "綠能浩克-護脊滾棒", "bonus": 50}, {"name": "星力環-肌力訓練繩", "bonus": 48}, {"name": "修臀日記-翹臀圈一組", "bonus": 72}, {"name": "RockPods", "bonus": 140}, {"name": "RockFloss", "bonus": 48}, {"name": "筋膜球（綠）", "bonus": 21}, {"name": "筋膜球（橘）", "bonus": 21}, {"name": "筋膜球（紅）", "bonus": 21}, {"name": "花生球", "bonus": 39}, {"name": "迷彩小滾筒", "bonus": 44}, {"name": "剛勁款滾筒", "bonus": 116}, {"name": "滾輪按摩棒", "bonus": 39}, {"name": "平衡訓練磚", "bonus": 116}, {"name": "肌貼（經典款）", "bonus": 42}, {"name": "反應訓練球", "bonus": 17}, {"name": "彈力帶1.5m（橘色）", "bonus": 11}, {"name": "彈力帶1.5m（綠色）", "bonus": 12}, {"name": "彈力帶1.5m（藍色）", "bonus": 13}, {"name": "彈力帶2.5m（橘色）", "bonus": 18}, {"name": "彈力帶2.5m（綠色）", "bonus": 20}, {"name": "彈力帶2.5m（藍色）", "bonus": 21}, {"name": "平衡訓練氣墊", "bonus": 97}, {"name": "保護貼", "bonus": 59}, {"name": "雷可貼布", "bonus": 92}, {"name": "五趾襪（M）曜黑灰", "bonus": 15}, {"name": "五趾襪（M）天藍灰", "bonus": 15}, {"name": "五趾襪（M）竹青灰", "bonus": 15}, {"name": "五趾襪（M）丈藍粉", "bonus": 15}, {"name": "五趾襪（L）丈藍灰", "bonus": 15}, {"name": "五趾襪（L）曜黑灰", "bonus": 15}, {"name": "五趾襪（L）松綠灰", "bonus": 15}, {"name": "五趾襪（XL）曜黑綠", "bonus": 15}, {"name": "坐墊（黑）", "bonus": 100}, {"name": "坐墊（灰）", "bonus": 100}, {"name": "坐墊（藍）", "bonus": 100}, {"name": "坐墊（紅）", "bonus": 100}, {"name": "動態貼布（膚色5cm）", "bonus": 53}, {"name": "動態貼布（花色5cm）", "bonus": 53}, {"name": "動態貼布（膚色7.5cm）", "bonus": 85}, {"name": "動態貼布（花色7.5cm）", "bonus": 85}, {"name": "360 拇指型護腕 (左：S、M)", "bonus": 53}, {"name": "360 拇指型護腕 (右：S、M)", "bonus": 53}, {"name": "360 拇指型護腕 (左：L、XL)", "bonus": 53}, {"name": "360 拇指型護腕 (右：L、XL)", "bonus": 53}, {"name": "360 髕骨型護膝 (左右通用：S/M)", "bonus": 76}, {"name": "360 髕骨型護膝 (左右通用：L/XL)", "bonus": 76}, {"name": "360 8 字穩固護踝 (左右通用：S)", "bonus": 53}, {"name": "360 8 字穩固護踝 (左右通用：M)", "bonus": 53}, {"name": "360 8 字穩固護踝 (左右通用：L)", "bonus": 53}, {"name": "超肌感貼紮長臂套 (左右通用：S)", "bonus": 66}, {"name": "超肌感貼紮長臂套 (左右通用：M)", "bonus": 66}, {"name": "超肌感貼紮長臂套 (左右通用：L)", "bonus": 66}, {"name": "超肌感貼紮長臂套 (左右通用：XL)", "bonus": 66}, {"name": "超肌感貼紮長腿套 (左右通用：S)", "bonus": 105}, {"name": "超肌感貼紮長腿套 (左右通用：M)", "bonus": 105}, {"name": "超肌感貼紮長腿套 (左右通用：L)", "bonus": 105}, {"name": "超肌感貼紮長腿套 (左右通用：XL)", "bonus": 105}, {"name": "超肌感貼紮長腿套 (左右通用：2XL)", "bonus": 105}, {"name": "日夜拇指外翻套 (左：S)", "bonus": 71}, {"name": "日夜拇指外翻套 (右：S)", "bonus": 71}, {"name": "日夜拇指外翻套 (左：Ｌ)", "bonus": 71}, {"name": "日夜拇指外翻套 (右：Ｌ)", "bonus": 71}, {"name": "AIDER 護腕 （黑）", "bonus": 105}, {"name": "AIDER 護腕 （白）", "bonus": 105}, {"name": "AIDER 護腕 （米粉）", "bonus": 105}, {"name": "AIDER 護腕 （天空藍）", "bonus": 105}, {"name": "AIDER 護腕 （紫）", "bonus": 105}, {"name": "壓縮褲（男款） (尺寸：S)", "bonus": 193}, {"name": "壓縮褲（男款） (尺寸：M)", "bonus": 193}, {"name": "壓縮褲（男款） (尺寸：L)", "bonus": 193}, {"name": "壓縮褲（男款） (尺寸：XL)", "bonus": 193}, {"name": "壓縮褲（女款） (尺寸：S)", "bonus": 193}, {"name": "壓縮褲（女款） (尺寸：M)", "bonus": 193}, {"name": "壓縮褲（女款） (尺寸：L)", "bonus": 193}, {"name": "壓縮褲（女款） (尺寸：XL)", "bonus": 193}, {"name": "「可塑型」多功能護腰 (尺寸：S、M）", "bonus": 187}, {"name": "「可塑型」多功能護腰 (尺寸：L、XL）", "bonus": 187}, {"name": "保濕美容凝膠頸套", "bonus": 57}, {"name": "保濕美容凝膠手肘套", "bonus": 57}, {"name": "保濕美容凝膠手套", "bonus": 50}, {"name": "保濕美容凝膠足跟套", "bonus": 68}, {"name": "保濕美容凝膠足套", "bonus": 53}, {"name": "筋膜球（黃）", "bonus": 21}];
+const SEED_HOLIDAYS = [{"date": "2026/01/01", "name": "元旦"}, {"date": "2026/02/16", "name": "除夕"}, {"date": "2026/02/17", "name": "春節"}, {"date": "2026/04/03", "name": "兒童節"}, {"date": "2026/04/04", "name": "清明節"}, {"date": "2026/07/02", "name": "測試國定假日"}, {"date": "2026/09/25", "name": "中秋節"}, {"date": "2026/10/10", "name": "國慶日"}];
+
+function seed(){
+  return {
+    _ver:4,
+    staff:[],
+    params:{googleReview:50, otRate1:1.34, otRate2:1.67, holRate:2},
+    products:SEED_PRODUCTS.map(p=>({name:p.name,bonus:Number(p.bonus)||0})),
+    holidays:SEED_HOLIDAYS.map(h=>({date:h.date,name:h.name})),
+    schedule:{year:2026, month:7, shifts:{}},
+    punches:[],
+    bonuses:[],
+    payDate:'2026/08/05',
+  };
+}
+
+/* ============================== STATE ============================== */
+const KEY='lh_admin_db_v2';
+function id(){return Math.random().toString(36).slice(2,9)}
+let DB = load();
+function migrate(db){
+  if(!db || typeof db!=='object') return seed();
+  if(!db._ver || db._ver<3){
+    db.staff=[]; db.punches=[]; db.bonuses=[];
+    if(db.schedule) db.schedule.shifts={};
+    db._ver=3;
+  }
+  if(db._ver<4){ if(db.params && db.params.holRate==null) db.params.holRate=2; db._ver=4; }
+  return db;
+}
+function load(){ try{const r=localStorage.getItem(KEY); if(r) return migrate(JSON.parse(r));}catch(e){} return seed(); }
+function save(){ try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){} pushToCloud(); }
+
+/* ============================== CLOUD SYNC ============================== */
+let WORKER_URL='', WORKER_SECRET='', _syncStatus='idle', _syncTimer=null;
+function loadCloudConfig(){ try{ WORKER_URL=localStorage.getItem('_cf_url')||''; WORKER_SECRET=localStorage.getItem('_cf_sec')||''; }catch(e){} }
+function saveCloudConfig(){ try{ localStorage.setItem('_cf_url',WORKER_URL); localStorage.setItem('_cf_sec',WORKER_SECRET); }catch(e){} }
+function updateSyncBadge(){
+  const b=document.getElementById('syncBadge'); if(!b) return;
+  if(!WORKER_URL){ b.style.display='none'; return; }
+  b.style.display='inline-flex';
+  const map={ syncing:['b-warn','⟳ 同步中'], ok:['b-ok','✓ 已同步'], error:['b-bad','⚠ 失敗'], idle:['','☁ 雲端'] };
+  const [cls,txt]=map[_syncStatus]||['',''];
+  b.className='badge '+cls; b.textContent=txt;
+}
+async function pullFromCloud(){
+  if(!WORKER_URL) return false;
+  _syncStatus='syncing'; updateSyncBadge();
+  try{
+    const res=await fetch(WORKER_URL+'/api/db',{headers:{'X-Auth-Token':WORKER_SECRET}});
+    if(res.ok){
+      const data=await res.json();
+      if(data&&data.staff!==undefined){ DB=migrate(data); try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){} _syncStatus='ok'; updateSyncBadge(); return true; }
+    }
+    _syncStatus='error'; updateSyncBadge();
+  }catch(e){ _syncStatus='error'; updateSyncBadge(); }
+  return false;
+}
+function pushToCloud(){
+  if(!WORKER_URL) return;
+  clearTimeout(_syncTimer);
+  _syncTimer=setTimeout(async()=>{
+    _syncStatus='syncing'; updateSyncBadge();
+    try{
+      const res=await fetch(WORKER_URL+'/api/db',{method:'POST',headers:{'Content-Type':'application/json','X-Auth-Token':WORKER_SECRET},body:JSON.stringify(DB)});
+      _syncStatus=res.ok?'ok':'error';
+    }catch(e){ _syncStatus='error'; }
+    updateSyncBadge();
+  },600);
+}
+function openCloudSettings(){
+  openOv(
+    '<button class="x" id="ovClose">&times;</button>'+
+    '<h3>☁ 雲端同步設定</h3>'+
+    '<p>輸入 Cloudflare Worker 網址與密鑰，讓不同裝置的資料即時同步。首次使用請先依 <b>worker.js</b> 說明完成部署（約 5 分鐘）。</p>'+
+    '<div class="login">'+
+      '<div class="fld"><label>Worker 網址</label><input id="cfUrl" placeholder="https://lh-payroll.your-name.workers.dev" value="'+esc(WORKER_URL)+'"></div>'+
+      '<div class="fld"><label>密鑰 (API_SECRET)</label><input id="cfSec" type="password" placeholder="自訂密鑰字串" value="'+esc(WORKER_SECRET)+'"></div>'+
+      '<div class="ok" id="cfMsg" style="min-height:18px;margin-top:4px"></div>'+
+    '</div>'+
+    '<div class="row">'+
+      '<button class="btn" id="cfTest">測試連線</button>'+
+      '<button class="btn primary" id="cfSave" style="flex:1;justify-content:center">儲存設定</button>'+
+    '</div>'
+  );
+  document.getElementById('ovClose').onclick=closeOv;
+  document.getElementById('cfSave').onclick=()=>{
+    WORKER_URL=document.getElementById('cfUrl').value.trim().replace(/\/$/,'');
+    WORKER_SECRET=document.getElementById('cfSec').value.trim();
+    saveCloudConfig(); updateSyncBadge(); closeOv();
+    if(WORKER_URL) pullFromCloud().then(ok=>{ if(ok) render(); });
+  };
+  document.getElementById('cfTest').onclick=async()=>{
+    const url=document.getElementById('cfUrl').value.trim().replace(/\/$/,'');
+    const sec=document.getElementById('cfSec').value.trim();
+    const msg=document.getElementById('cfMsg');
+    msg.style.color='var(--warn)'; msg.textContent='測試中…';
+    try{
+      const res=await fetch(url+'/api/db',{headers:{'X-Auth-Token':sec}});
+      if(res.ok){ msg.style.color='var(--ok)'; msg.textContent='✓ 連線成功！可以儲存設定。'; }
+      else if(res.status===401){ msg.style.color='var(--bad)'; msg.textContent='✕ 密鑰錯誤，請確認 API_SECRET。'; }
+      else{ msg.style.color='var(--bad)'; msg.textContent='✕ HTTP '+res.status+'，請確認 Worker 設定。'; }
+    }catch(e){ msg.style.color='var(--bad)'; msg.textContent='✕ 無法連線，請確認 Worker URL。'; }
+  };
+}
+
+/* ============================== HELPERS ============================== */
+const SHIFT_OPTS=['','A','B','C','D','E','休','事假','病假'];
+const SHIFT_HOURS={A:8,B:8,C:4,D:4,E:4};
+const pad2=n=>String(n).padStart(2,'0');
+const fmt=n=>{ n=Math.round(Number(n)||0); return n.toLocaleString('en-US'); };
+const r1=x=>Math.round((Number(x)||0)*10)/10;
+function ymPrefix(){ return DB.schedule.year+'/'+pad2(DB.schedule.month)+'/'; }
+function isHoliday(d){ return DB.holidays.some(h=>h.date===d); }
+function holidayName(d){ const h=DB.holidays.find(x=>x.date===d); return h?h.name:''; }
+function productBonus(name){ const p=DB.products.find(x=>x.name===name); return p?Number(p.bonus)||0:0; }
+function staffByName(n){ return DB.staff.find(s=>s.name===n); }
+function isPartTime(s){ return /兼職/.test(s.title)||/兼職/.test(s.name); }
+function diffH(a,b){ if(!a||!b) return 0; const[ah,am]=a.split(':').map(Number); const[bh,bm]=b.split(':').map(Number); return ((bh*60+bm)-(ah*60+am))/60; }
+function punchHours(p){
+  if(p.manual!=='' && p.manual!=null && !isNaN(p.manual)) return Math.round(Number(p.manual)*2)/2;
+  let h=0;
+  if(p.in1&&p.out1) h+=r1(diffH(p.in1,p.out1));
+  if(p.in2&&p.out2) h+=r1(diffH(p.in2,p.out2));
+  return r1(h);
+}
+function punchOT(p){ const h=punchHours(p); if(isHoliday(p.date)) return 0; return h>8?r1(h-8):0; }
+function punchHol(p){ return isHoliday(p.date)?punchHours(p):0; }
+function bonusCalc(b){
+  const per = b.product==='Google 5星好評' ? 0 : productBonus(b.product);
+  const sub = (Number(b.qty)||0)*per;
+  const perRev = (Number(b.reviews)||0)>0 ? (Number(DB.params.googleReview)||0) : 0;
+  const rev = (Number(b.reviews)||0)*perRev;
+  return {per,sub,perRev,rev,total:sub+rev};
+}
+function scheduleLeave(name){
+  const days=new Date(DB.schedule.year,DB.schedule.month,0).getDate();
+  for(let d=1; d<=days; d++){ const v=DB.schedule.shifts[name+'__'+d]; if(v==='事假'||v==='病假') return true; }
+  return false;
+}
+function payrollFor(s){
+  const ps = DB.punches.filter(p=>p.staff===s.name && p.date.startsWith(ymPrefix()));
+  const bs = DB.bonuses.filter(b=>b.staff===s.name && b.date.startsWith(ymPrefix()));
+  let total=0, ot=0, hol=0;
+  ps.forEach(p=>{ total+=punchHours(p); ot+=punchOT(p); hol+=punchHol(p); });
+  total=r1(total); ot=r1(ot); hol=r1(hol);
+  const reg=r1(total-ot-hol);
+  const hr=Number(s.hourly)||0;
+  const base=Math.round(hr*reg);
+  const otPay=Math.round(hr*(Number(DB.params.otRate1)||0)*Math.min(2,ot) + hr*(Number(DB.params.otRate2)||0)*Math.max(0,ot-2));
+  const holPay=Math.round(hr*(Number(DB.params.holRate)||2)*hol);
+  const leaveDeduct=0;
+  const warn = ps.some(p=>p.status && p.status!=='正常');
+  const voided = isPartTime(s) || scheduleLeave(s.name) || warn;
+  const perfect = voided ? 0 : (Number(s.perfect)||0);
+  let prodSub=0, rev=0, reviews=0, bonusTotal=0;
+  bs.forEach(b=>{ const c=bonusCalc(b); prodSub+=c.sub; rev+=c.rev; reviews+=(Number(b.reviews)||0); bonusTotal+=c.total; });
+  const insurance=Number(s.insurance)||0;
+  const net = base+otPay+holPay-leaveDeduct+perfect+bonusTotal-insurance;
+  return {total,reg,ot,hol,base,otPay,holPay,leaveDeduct,perfect,voided,warn,prodSub,rev,reviews,bonusTotal,insurance,net};
+}
+
+/* ============================== NAV / ROUTER ============================== */
+const VIEWS=[
+  {id:'dashboard',label:'營運儀表板',icon:'M4 13h6V4H4v9Zm0 7h6v-5H4v5Zm10 0h6V11h-6v9Zm0-16v5h6V4h-6Z'},
+  {id:'params',label:'參數總控台',icon:'M4 6h10M18 6h2M4 12h2M10 12h10M4 18h7M15 18h5M14 4v4M6 10v4M11 16v4'},
+  {id:'schedule',label:'每月排班表',icon:'M7 3v3M17 3v3M3 9h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z'},
+  {id:'punch',label:'每日打卡',icon:'M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z'},
+  {id:'bonus',label:'商品評論獎金',icon:'M20 12v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8M2 7h20v5H2zM12 21V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7Zm0 0h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7Z'},
+  {id:'payroll',label:'月度薪資結算',icon:'M3 5h18v14H3zM3 10h18M7 15h4'},
+  {id:'payslip',label:'電子薪資明細單',icon:'M6 2h9l5 5v15H6zM15 2v5h5M9 13h6M9 17h6M9 9h2'},
+];
+let current='dashboard';
+function buildNav(){
+  document.getElementById('nav').innerHTML = VIEWS.map(v=>
+    '<button data-v="'+v.id+'" class="'+(v.id===current?'on':'')+'">'+
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="'+v.icon+'"/></svg>'+
+    '<span>'+v.label+'</span></button>').join('');
+  document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{ current=b.dataset.v; render(); });
+}
+function render(){
+  if(window.__kioskTimer){ clearInterval(window.__kioskTimer); window.__kioskTimer=null; }
+  buildNav();
+  const v=VIEWS.find(x=>x.id===current);
+  document.getElementById('crumb').innerHTML='管理系統　/　<b>'+v.label+'</b>';
+  document.getElementById('topYear').value=DB.schedule.year;
+  document.getElementById('topMonth').value=DB.schedule.month;
+  ({dashboard:viewDashboard,params:viewParams,schedule:viewSchedule,punch:viewPunch,bonus:viewBonus,payroll:viewPayroll,payslip:viewPayslip}[current])();
+  window.scrollTo(0,0);
+}
+function head(eyebrow,title,desc){
+  return '<div class="head"><div class="eyebrow">'+eyebrow+'</div><h2>'+title+'</h2>'+(desc?'<p>'+desc+'</p>':'')+'</div>';
+}
+const V=()=>document.getElementById('view');
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function staffOpts(sel){ return DB.staff.map(s=>'<option '+(s.name===sel?'selected':'')+'>'+esc(s.name)+'</option>').join(''); }
+
+/* ============================== VIEW: DASHBOARD ============================== */
+function viewDashboard(){
+  let totalNet=0, prodSub=0, reviews=0;
+  const rows=DB.staff.map(s=>{ const p=payrollFor(s); totalNet+=p.net; prodSub+=p.prodSub; reviews+=p.reviews; return {s,p}; });
+  V().innerHTML =
+    head('Operations','院長營運分析儀表板','本月 ('+DB.schedule.year+' 年 '+DB.schedule.month+' 月) 行政櫃檯核心營運指標，隨參數與紀錄即時連動。')+
+    '<div class="kpis">'+
+      kpi('本月行政薪資總支出','M3 5h18v14H3zM3 10h18','NT$ '+fmt(totalNet),'三位同仁實領薪資加總')+
+      kpi('商品銷售提撥總獎金','M20 12v8H4v-8M2 7h20v5H2z','NT$ '+fmt(prodSub),'不含評論推廣獎金')+
+      kpi('衝刺 Google 評論總則數','M12 2l2.9 6.3L22 9l-5 4.6 1.3 6.9L12 17l-6.3 3.5L7 13.6 2 9l7.1-.7z',fmt(reviews)+' 則','五星好評累積引導')+
+    '</div>'+
+    '<div class="card"><div class="ch"><h3>同仁個別激勵表現與分析</h3><span class="hint">出勤工時／商品獎金／評論／實領</span></div>'+
+    '<div class="cb flush scroll"><table class="tbl"><thead><tr>'+
+      '<th>員工姓名</th><th>職稱</th><th class="num">出勤總實際工時</th><th class="num">販售商品累積獎金</th><th class="num">引導五星評論</th><th class="num">實領薪資總額</th>'+
+    '</tr></thead><tbody>'+
+      rows.map(({s,p})=>'<tr><td><b>'+esc(s.name)+'</b></td><td class="muted">'+esc(s.title)+'</td>'+
+        '<td class="num tnum">'+r1(p.total)+' 小時</td>'+
+        '<td class="num tnum">NT$ '+fmt(p.prodSub)+'</td>'+
+        '<td class="num tnum">'+p.reviews+' 則</td>'+
+        '<td class="num tnum ro">NT$ '+fmt(p.net)+'</td></tr>').join('')+
+    '</tbody></table></div></div>';
+}
+function kpi(lab,icon,val,sub){
+  return '<div class="kpi"><div class="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="'+icon+'"/></svg>'+lab+'</div>'+
+    '<div class="val">'+val+'</div><div class="sub">'+sub+'</div></div>';
+}
+
+/* ============================== VIEW: PARAMS ============================== */
+let prodFilter='';
+function viewParams(){
+  V().innerHTML =
+    head('Control Panel','參數總控台','所有薪資、獎金與假日計算的單一資料來源。在此增刪修改，全系統即時連動。')+
+    /* 區塊一 staff */
+    '<div class="card"><div class="ch"><h3>區塊一 · 行政同仁基本資料</h3><div class="spacer"></div>'+saveBtnHTML('saveStaff')+'</div>'+
+    '<div class="cb flush scroll"><table class="tbl"><thead><tr>'+
+      '<th style="min-width:150px">員工姓名</th><th style="min-width:140px">職務職稱</th><th class="num">約定時薪</th><th class="num">全勤獎金</th><th class="num">勞健保自付額</th><th></th>'+
+    '</tr></thead><tbody id="staffBody">'+ DB.staff.map((s,i)=>staffRow(s,i)).join('') +'</tbody></table></div>'+
+    '<div class="cb"><button class="addbtn" id="addStaff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>新增同仁</button></div></div>'+
+
+    '<div class="pgrid">'+
+    /* 區塊二 incentive params */
+    '<div class="card"><div class="ch"><h3>區塊二 · 激勵與法規參數</h3><div class="spacer"></div>'+saveBtnHTML('saveParams')+'</div>'+
+    '<div class="cb"><div class="miniform">'+
+      '<div class="fld"><label>Google 五星評論獎金 / 則</label><input type="number" id="pGoogle" value="'+(DB.params.googleReview)+'"></div>'+
+      '<div class="fld"><label>平日加班費率 前 2 小時</label><input type="number" step="0.01" id="pOt1" value="'+(DB.params.otRate1)+'"></div>'+
+      '<div class="fld"><label>平日加班費率 第 3–4 小時</label><input type="number" step="0.01" id="pOt2" value="'+(DB.params.otRate2)+'"></div>'+
+      '<div class="fld"><label>國定假日加班費率</label><input type="number" step="0.01" id="pHol" value="'+(DB.params.holRate==null?2:DB.params.holRate)+'"></div>'+
+    '</div><div class="note" style="margin-top:14px">加班費依勞基法：前 2 小時 <b>4/3 倍</b>（1.34）、第 3 小時起 <b>5/3 倍</b>（1.67）。國定假日出勤工時以「國定假日加班費率」計算（預設 <b>2 倍</b>）。</div></div></div>'+
+
+    /* 區塊三 holidays */
+    '<div class="card"><div class="ch"><h3>區塊三 · 國定假日控管庫</h3><span class="hint">排班表自動標紅底</span><div class="spacer"></div>'+saveBtnHTML('saveHol')+'</div>'+
+    '<div class="cb flush scroll"><table class="tbl"><thead><tr><th>日期 (YYYY/MM/DD)</th><th>節日名稱</th><th></th></tr></thead>'+
+    '<tbody id="holBody">'+ DB.holidays.map((h,i)=>holRow(h,i)).join('') +'</tbody></table></div>'+
+    '<div class="cb"><button class="addbtn" id="addHol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>新增假日</button></div></div>'+
+    '</div>'+
+
+    /* products */
+    '<div class="card"><div class="ch"><h3>商品販售獎金庫</h3><div class="spacer"></div><span class="hint">共 '+DB.products.length+' 項</span>'+saveBtnHTML('saveProd')+'</div>'+
+    '<div class="cb"><input class="prodsearch" id="prodSearch" placeholder="搜尋商品名稱…" value="'+esc(prodFilter)+'"></div>'+
+    '<div class="cb flush scroll prodlist"><table class="tbl"><thead><tr><th style="min-width:280px">商品 / 推廣項目名稱</th><th class="num">販售獎金 (元)</th><th></th></tr></thead>'+
+    '<tbody id="prodBody">'+ prodRows() +'</tbody></table></div>'+
+    '<div class="cb"><button class="addbtn" id="addProd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>新增商品</button></div></div>';
+
+  // staff events
+  bindCells('staffBody', (i,k,val)=>{ DB.staff[i][k] = (k==='name'||k==='title')?val:(Number(val)||0); save(); });
+  document.getElementById('addStaff').onclick=()=>{ DB.staff.push({name:'新同仁',title:'櫃檯行政',hourly:185,perfect:0,insurance:0}); save(); viewParams(); };
+  delBtns('staffBody', i=>{ const nm=DB.staff[i]?DB.staff[i].name:'此同仁'; confirmModal('刪除同仁','確定要刪除「<b>'+esc(nm)+'</b>」嗎？刪除後此同仁的薪資將不再計算（已建立的打卡與獎金紀錄不會自動移除）。此動作無法復原。','確定刪除',()=>{ DB.staff.splice(i,1); save(); viewParams(); }); });
+  // params
+  document.getElementById('pGoogle').onchange=e=>{ DB.params.googleReview=Number(e.target.value)||0; save(); };
+  document.getElementById('pOt1').onchange=e=>{ DB.params.otRate1=Number(e.target.value)||0; save(); };
+  document.getElementById('pOt2').onchange=e=>{ DB.params.otRate2=Number(e.target.value)||0; save(); };
+  document.getElementById('pHol').onchange=e=>{ DB.params.holRate=Number(e.target.value)||0; save(); };
+  // holidays
+  bindCells('holBody',(i,k,val)=>{ DB.holidays[i][k]=val; save(); });
+  document.getElementById('addHol').onclick=()=>{ DB.holidays.push({date:DB.schedule.year+'/01/01',name:'新節日'}); save(); viewParams(); };
+  delBtns('holBody', i=>{ DB.holidays.splice(i,1); save(); viewParams(); });
+  // products
+  const ps=document.getElementById('prodSearch');
+  ps.oninput=e=>{ prodFilter=e.target.value; document.getElementById('prodBody').innerHTML=prodRows(); bindProd(); };
+  document.getElementById('addProd').onclick=()=>{ DB.products.unshift({name:'新商品',bonus:0}); prodFilter=''; save(); viewParams(); };
+  bindProd();
+  ['saveStaff','saveParams','saveHol','saveProd'].forEach(wireSave);
+}
+function saveBtnHTML(id){ return '<button class="btn sm savebtn" id="'+id+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2zM17 21v-8H7v8M7 7h6"/></svg>儲存</button>'; }
+function wireSave(btnId){
+  const b=document.getElementById(btnId); if(!b) return;
+  b.onclick=()=>{
+    // ensure the focused field commits before saving
+    if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    save();
+    const html=b.innerHTML; b.classList.add('saved');
+    b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>已儲存';
+    setTimeout(()=>{ b.classList.remove('saved'); b.innerHTML=html; }, 1400);
+  };
+}
+function staffRow(s,i){ return '<tr data-i="'+i+'">'+
+  '<td><input class="cell-in" data-k="name" value="'+esc(s.name)+'"></td>'+
+  '<td><input class="cell-in" data-k="title" value="'+esc(s.title)+'"></td>'+
+  '<td class="num"><input class="cell-in" data-k="hourly" type="number" value="'+s.hourly+'" style="text-align:right"></td>'+
+  '<td class="num"><input class="cell-in" data-k="perfect" type="number" value="'+s.perfect+'" style="text-align:right"></td>'+
+  '<td class="num"><input class="cell-in" data-k="insurance" type="number" value="'+s.insurance+'" style="text-align:right"></td>'+
+  '<td><button class="del" data-del="'+i+'">&times;</button></td></tr>'; }
+function holRow(h,i){ return '<tr data-i="'+i+'">'+
+  '<td><input class="cell-in" data-k="date" value="'+esc(h.date)+'" placeholder="2026/01/01"></td>'+
+  '<td><input class="cell-in" data-k="name" value="'+esc(h.name)+'"></td>'+
+  '<td><button class="del" data-del="'+i+'">&times;</button></td></tr>'; }
+function prodRows(){
+  const f=prodFilter.trim();
+  return DB.products.map((p,i)=>({p,i})).filter(({p})=>!f||p.name.includes(f)).map(({p,i})=>
+    '<tr data-i="'+i+'"><td><input class="cell-in" data-k="name" value="'+esc(p.name)+'"></td>'+
+    '<td class="num"><input class="cell-in" data-k="bonus" type="number" value="'+p.bonus+'" style="text-align:right"></td>'+
+    '<td><button class="del" data-del="'+i+'">&times;</button></td></tr>').join('')
+    || '<tr><td colspan="3" class="empty">找不到符合的商品</td></tr>';
+}
+function bindProd(){
+  bindCells('prodBody',(i,k,val)=>{ DB.products[i][k]=(k==='bonus')?(Number(val)||0):val; save(); });
+  delBtns('prodBody', i=>{ DB.products.splice(i,1); save(); document.getElementById('prodBody').innerHTML=prodRows(); bindProd(); });
+}
+function bindCells(bodyId, cb){
+  document.querySelectorAll('#'+bodyId+' tr[data-i]').forEach(tr=>{
+    const i=+tr.dataset.i;
+    tr.querySelectorAll('[data-k]').forEach(inp=>{ inp.onchange=()=>cb(i,inp.dataset.k,inp.value); });
+  });
+}
+function delBtns(bodyId, cb){ document.querySelectorAll('#'+bodyId+' [data-del]').forEach(b=>b.onclick=()=>cb(+b.dataset.del)); }
+
+/* ============================== VIEW: SCHEDULE ============================== */
+function viewSchedule(){
+  const y=DB.schedule.year, m=DB.schedule.month;
+  const days=new Date(y,m,0).getDate();
+  const wk=['日','一','二','三','四','五','六'];
+  let head_=''; for(let d=1; d<=days; d++){ const dt=new Date(y,m-1,d); const jd=dt.getDay(); const we=(jd===0||jd===6); const ho=isHoliday(ymd(d)); head_+='<th class="'+(ho?'ho':we?'we':'')+'" title="'+(ho?holidayName(ymd(d)):'')+'">'+d+'<br><span style="font-weight:600">'+wk[jd]+'</span></th>'; }
+
+  const body = DB.staff.map(s=>{
+    let cells=''; let hrs=0;
+    for(let d=1; d<=days; d++){ const dt=new Date(y,m-1,d); const jd=dt.getDay(); const we=(jd===0||jd===6); const ho=isHoliday(ymd(d));
+      const cur=DB.schedule.shifts[s.name+'__'+d]||'';
+      if(SHIFT_HOURS[cur]) hrs+=SHIFT_HOURS[cur];
+      cells+='<td class="day '+(ho?'ho':we?'we':'')+'"><select data-name="'+esc(s.name)+'" data-day="'+d+'">'+
+        SHIFT_OPTS.map(o=>'<option '+(o===cur?'selected':'')+'>'+o+'</option>').join('')+'</select></td>';
+    }
+    const pay=hrs*(Number(s.hourly)||0);
+    return '<tr><td class="nm">'+esc(s.name)+'</td>'+cells+'<td class="tot">'+hrs+' hr<br><span style="font-weight:600;color:var(--faint)">NT$ '+fmt(pay)+'</span></td></tr>';
+  }).join('');
+
+  // 人力確認 row
+  let chk='<tr class="chk"><td class="nm">每日櫃檯人力確認</td>';
+  for(let d=1; d<=days; d++){ chk+='<td>'+staffingBadge(d)+'</td>'; }
+  chk+='<td class="tot"></td></tr>';
+
+  V().innerHTML =
+    head('Schedule','每月排班表',y+' 年 '+m+' 月　班別代碼：A 早午班 / B 午晚班（8h）、C 早班 / D 午班 / E 晚班（4h）。人力規則：每時段至少 1 人，平日（一～五）需<b>早、午、晚</b>都有人，假日（六、日）需<b>早、午</b>有人。國定假日自動標紅底。')+
+    '<div class="card" id="schedCard"><div class="ch"><h3>'+y+' 年 '+m+' 月　行政櫃檯排班</h3><div class="spacer"></div>'+
+      '<span class="hint">點儲存格選擇班別</span>'+
+      '<button class="btn sm no-print" id="btnSchedPdf" style="margin-left:10px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>列印 / 存 PDF</button></div>'+
+    '<div class="cb flush scroll"><table class="sched"><thead><tr><th class="nm">行政人員</th>'+head_+'<th class="tot">總工時 / 估薪</th></tr></thead>'+
+    '<tbody>'+body+chk+'</tbody></table></div>'+
+    '<div class="cb"><div class="legend">'+
+      '<span><i class="dot" style="background:var(--bad-bg);border:1px solid var(--bad)"></i>國定假日</span>'+
+      '<span><i class="dot" style="background:#f4fbff;border:1px solid var(--sky-100)"></i>週末</span>'+
+      '<span><span class="badge b-ok">✓ OK</span>人力足夠</span>'+
+      '<span><span class="badge b-warn">⚠️ 缺班</span>需補人</span>'+
+      '<span><span class="badge b-bad">❌ 休診</span>全天無班</span>'+
+    '</div></div></div>';
+
+  function ymd(d){ return y+'/'+pad2(m)+'/'+pad2(d); }
+  document.querySelectorAll('.sched select').forEach(sel=>{
+    sel.onchange=()=>{ const key=sel.dataset.name+'__'+sel.dataset.day; if(sel.value) DB.schedule.shifts[key]=sel.value; else delete DB.schedule.shifts[key]; save(); viewSchedule(); };
+  });
+  const sp=document.getElementById('btnSchedPdf'); if(sp) sp.onclick=printSchedule;
+}
+function staffingBadge(d){
+  const y=DB.schedule.year,m=DB.schedule.month;
+  let A=0,B=0,C=0,D=0,E=0;
+  DB.staff.forEach(s=>{ const v=DB.schedule.shifts[s.name+'__'+d]; if(v==='A')A++;else if(v==='B')B++;else if(v==='C')C++;else if(v==='D')D++;else if(v==='E')E++; });
+  if(A+B+C+D+E===0) return '<span class="badge b-bad">❌ 休診</span>';
+  const jd=new Date(y,m-1,d).getDay(); const weekend=(jd===0||jd===6);
+  const morning=(A+C)>0;     // 早：A 早午 / C 早
+  const noon=(A+B+D)>0;      // 午：A 早午 / B 午晚 / D 午
+  const evening=(B+E)>0;     // 晚：B 午晚 / E 晚
+  const miss=[];
+  if(!morning) miss.push('早');
+  if(!noon) miss.push('午');
+  if(!weekend && !evening) miss.push('晚');   // 晚班僅平日要求
+  if(miss.length===0) return '<span class="badge b-ok">✓ '+(weekend?'週末OK':'平日OK')+'</span>';
+  return '<span class="badge b-warn">⚠️ 缺'+miss.join('')+'</span>';
+}
+
+/* ============================== FRONT DESK (public kiosk) ============================== */
+function todayStr(){ const d=new Date(); return d.getFullYear()+'/'+pad2(d.getMonth()+1)+'/'+pad2(d.getDate()); }
+function nowHM(){ const d=new Date(); return pad2(d.getHours())+':'+pad2(d.getMinutes()); }
+function kioskShift(name){
+  const d=new Date();
+  if(d.getFullYear()===DB.schedule.year && (d.getMonth()+1)===DB.schedule.month){
+    const v=DB.schedule.shifts[name+'__'+d.getDate()];
+    if(v && SHIFT_HOURS[v]) return v;
+    if(v==='休'||v==='事假'||v==='病假') return v;
+  }
+  return 'A';
+}
+function findTodayPunch(name){ const ds=todayStr(); return DB.punches.find(p=>p.staff===name && p.date===ds); }
+const KSLOTS=[['in1','上午上班'],['out1','上午下班'],['in2','下午上班'],['out2','下午下班']];
+function kioskCards(){
+  return DB.staff.map(s=>{
+    const p=findTodayPunch(s.name);
+    const sh=p?p.shift:kioskShift(s.name);
+    const next=KSLOTS.find(([k])=>!(p&&p[k]));
+    const slots=KSLOTS.map(([k,lab])=>{
+      const val=p&&p[k]?p[k]:'';
+      return '<div class="kslot'+(val?' done':'')+'"><div class="l">'+lab+'</div><div class="t">'+(val||'—')+'</div></div>';
+    }).join('');
+    const btn = next
+      ? '<button class="kbtn" data-stamp="'+esc(s.name)+'" data-slot="'+next[0]+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/></svg>'+next[1]+'打卡</button>'
+      : '<button class="kbtn" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/></svg>今日打卡完成</button>';
+    return '<div class="kcard"><div class="kh"><div class="kname">'+esc(s.name)+'</div>'+
+      '<div class="kshift">今日班別 '+esc(sh)+'</div></div>'+
+      '<div class="kslots">'+slots+'</div>'+btn+'</div>';
+  }).join('') || '<div class="empty card">尚無同仁資料，請於後台「參數總控台」新增。</div>';
+}
+function renderGate(){
+  if(window.__kioskTimer){ clearInterval(window.__kioskTimer); window.__kioskTimer=null; }
+  const ds=todayStr(); const ho=isHoliday(ds);
+  const mark='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 14c2.2 0 2.2-2.6 4.4-2.6S8.6 14 10.8 14 13 11.4 15.2 11.4 17.4 14 19.6 14 22 11.4 22 11.4"/><path d="M2 18.4c2.2 0 2.2-2.6 4.4-2.6s2.2 2.6 4.4 2.6 2.2-2.6 4.4-2.6 2.2 2.6 4.4 2.6"/><path d="M12 3l2.2 4.4L19 8l-3.4 3.1.9 4.9-4.5-2.5"/></svg>';
+  document.getElementById('gate').innerHTML =
+    '<div class="gatewrap">'+
+      '<div class="gatebar">'+
+        '<div class="gbrand"><div class="mark">'+mark+'</div><div><div class="t1">領航物理治療所</div><div class="t2">前台打卡系統</div></div></div>'+
+        '<button class="btn" id="goAdmin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>後台登入</button>'+
+      '</div>'+
+      '<div class="gatebody">'+
+        '<div class="kclock"><div><div class="time" id="kTime">'+nowHM()+'</div>'+
+          '<div class="date">'+ds.replace(/\//g,' / ')+'　星期'+'日一二三四五六'.charAt(new Date().getDay())+'</div></div>'+
+          (ho?'<div class="ho">國定假日 · '+esc(holidayName(ds))+'</div>':'')+
+        '</div>'+
+        '<div class="kio">'+kioskCards()+'</div>'+
+        '<div class="gatefoot">同仁上下班於此一鍵打卡，紀錄自動寫入後台「每日打卡」並計入薪資。資料僅存於本機瀏覽器。</div>'+
+      '</div>'+
+    '</div>';
+  const tEl=document.getElementById('kTime');
+  window.__kioskTimer=setInterval(()=>{ const d=new Date(); if(tEl) tEl.textContent=pad2(d.getHours())+':'+pad2(d.getMinutes())+':'+pad2(d.getSeconds()); }, 1000);
+  document.querySelectorAll('[data-stamp]').forEach(b=>{
+    b.onclick=()=>{
+      const name=b.getAttribute('data-stamp'), slot=b.getAttribute('data-slot');
+      let p=findTodayPunch(name);
+      if(!p){ p={id:id(),date:todayStr(),staff:name,shift:kioskShift(name),in1:'',out1:'',in2:'',out2:'',manual:'',status:'正常'}; DB.punches.push(p); }
+      p[slot]=nowHM(); save(); renderGate();
+    };
+  });
+  document.getElementById('goAdmin').onclick=openLogin;
+}
+
+/* ============================== VIEW: PUNCH ============================== */
+function viewPunch(){
+  const rows=DB.punches.map((p,i)=>{
+    const h=punchHours(p), ot=punchOT(p), hol=punchHol(p); const ho=isHoliday(p.date);
+    return '<tr data-i="'+i+'">'+
+      '<td><input class="cell-in" data-k="date" value="'+esc(p.date)+'" style="width:108px">'+(ho?'<div style="margin-top:3px"><span class="badge b-bad">'+esc(holidayName(p.date))+'</span></div>':'')+'</td>'+
+      '<td><select class="cell-in" data-k="staff">'+staffOpts(p.staff)+'</select></td>'+
+      '<td><select class="cell-in" data-k="shift" style="width:80px">'+SHIFT_OPTS.map(o=>'<option '+(o===p.shift?'selected':'')+'>'+o+'</option>').join('')+'</select></td>'+
+      '<td><input class="cell-in" data-k="in1" type="time" value="'+esc(p.in1)+'" style="width:120px"></td>'+
+      '<td><input class="cell-in" data-k="out1" type="time" value="'+esc(p.out1)+'" style="width:120px"></td>'+
+      '<td><input class="cell-in" data-k="in2" type="time" value="'+esc(p.in2)+'" style="width:120px"></td>'+
+      '<td><input class="cell-in" data-k="out2" type="time" value="'+esc(p.out2)+'" style="width:120px"></td>'+
+      '<td><input class="cell-in" data-k="manual" type="number" step="0.5" min="0" value="'+esc(p.manual)+'" placeholder="—" title="以 0.5 小時為單位" style="width:64px;text-align:right"></td>'+
+      '<td><select class="cell-in" data-k="status" style="width:108px">'+['正常','遲到','早退','遲到+早退','缺勤異常'].map(o=>'<option '+(o===p.status?'selected':'')+'>'+o+'</option>').join('')+'</select></td>'+
+      '<td class="num ro tnum">'+h+'</td>'+
+      '<td class="num tnum">'+(ot?'<span class="badge b-warn">'+ot+'</span>':'0')+'</td>'+
+      '<td class="num tnum">'+(hol?'<span class="badge b-bad">'+hol+'</span>':'0')+'</td>'+
+      '<td><button class="del" data-del="'+i+'">&times;</button></td></tr>';
+  }).join('') || '<tr><td colspan="13" class="empty">尚無打卡紀錄，點下方按鈕新增。</td></tr>';
+
+  V().innerHTML =
+    head('Time Clock','每日打卡紀錄表','輸入四段打卡時間自動算工時；或於「主管覆核」欄直接填入時數覆蓋。國定假日工時自動歸入假日加倍計算。')+
+    '<div class="note">「最終工時」優先採用主管覆核欄位的數字；留白時才以打卡時間自動計算。<b>覆核欄以 0.5 小時為單位</b>（例如 0.5、1、1.5…），填入後自動對齊半小時。當日若為國定假日，全部工時計入<b>國定假日工時</b>（不另計平日加班）。</div>'+
+    '<div class="card"><div class="ch"><h3>打卡明細</h3><div class="spacer"></div><span class="hint">僅顯示 '+DB.schedule.year+'/'+pad2(DB.schedule.month)+' 之外亦可記錄；薪資結算只計當月</span>'+saveBtnHTML('savePunch')+'</div>'+
+    '<div class="cb flush scroll"><table class="tbl"><thead><tr>'+
+      '<th>日期</th><th>員工</th><th>班別</th><th>上班1</th><th>下班1</th><th>上班2</th><th>下班2</th><th class="num">覆核</th><th>考勤狀態</th><th class="num">最終工時</th><th class="num">平日加班</th><th class="num">國定假日</th><th></th>'+
+    '</tr></thead><tbody id="punchBody">'+rows+'</tbody></table></div>'+
+    '<div class="cb"><button class="addbtn" id="addPunch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>新增打卡</button></div></div>';
+
+  bindCells('punchBody',(i,k,val)=>{ DB.punches[i][k]=val; save(); viewPunch(); });
+  delBtns('punchBody', i=>{ DB.punches.splice(i,1); save(); viewPunch(); });
+  document.getElementById('addPunch').onclick=()=>{
+    DB.punches.push({id:id(),date:DB.schedule.year+'/'+pad2(DB.schedule.month)+'/01',staff:DB.staff[0]?DB.staff[0].name:'',shift:'A',in1:'',out1:'',in2:'',out2:'',manual:'',status:'正常'});
+    save(); viewPunch();
+  };
+  wireSave('savePunch');
+}
+
+/* ============================== VIEW: BONUS ============================== */
+function viewBonus(){
+  const opts='<option>Google 5星好評</option>'+
+    DB.products.map(p=>'<option>'+esc(p.name)+'</option>').join('');
+  const rows=DB.bonuses.map((b,i)=>{
+    const c=bonusCalc(b);
+    return '<tr data-i="'+i+'">'+
+      '<td><input class="cell-in" data-k="date" value="'+esc(b.date)+'" style="width:108px"></td>'+
+      '<td><select class="cell-in" data-k="staff">'+staffOpts(b.staff)+'</select></td>'+
+      '<td><select class="cell-in" data-k="product" style="min-width:200px">'+selOpts(opts,b.product)+'</select></td>'+
+      '<td class="num"><input class="cell-in" data-k="qty" type="number" value="'+(b.qty||0)+'" style="width:62px;text-align:right"></td>'+
+      '<td class="num"><input class="cell-in" data-k="reviews" type="number" value="'+(b.reviews||0)+'" style="width:62px;text-align:right"></td>'+
+      '<td class="num tnum muted">'+fmt(c.per)+'</td>'+
+      '<td class="num tnum">'+fmt(c.sub)+'</td>'+
+      '<td class="num tnum">'+fmt(c.rev)+'</td>'+
+      '<td class="num ro tnum">'+fmt(c.total)+'</td>'+
+      '<td><button class="del" data-del="'+i+'">&times;</button></td></tr>';
+  }).join('') || '<tr><td colspan="10" class="empty">尚無獎金紀錄，點下方按鈕新增。</td></tr>';
+
+  V().innerHTML =
+    head('Incentives','商品與評論獎金明細','記錄同仁商品販售與 Google 五星好評推廣。每件獎勵金自動由「參數總控台」商品庫帶入。')+
+    '<div class="note">「每件獎勵金」會用商品名稱到參數庫查表 — 你在參數總控台改價或新增商品，這裡<b>自動更新</b>，不需手動填。選「Google 5星好評」則改以右側評論則數計獎。</div>'+
+    '<div class="card"><div class="ch"><h3>獎金明細</h3><div class="spacer"></div>'+saveBtnHTML('saveBonus')+'</div>'+
+    '<div class="cb flush scroll"><table class="tbl"><thead><tr>'+
+      '<th>明細日期</th><th>員工</th><th>販售商品 / 推廣項目</th><th class="num">數量</th><th class="num">好評則數</th><th class="num">每件獎勵</th><th class="num">項目小計</th><th class="num">評論獎金</th><th class="num">當日總計</th><th></th>'+
+    '</tr></thead><tbody id="bonusBody">'+rows+'</tbody></table></div>'+
+    '<div class="cb"><button class="addbtn" id="addBonus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>新增獎金紀錄</button></div></div>';
+
+  bindCells('bonusBody',(i,k,val)=>{ DB.bonuses[i][k]=(k==='qty'||k==='reviews')?(Number(val)||0):val; save(); viewBonus(); });
+  delBtns('bonusBody', i=>{ DB.bonuses.splice(i,1); save(); viewBonus(); });
+  document.getElementById('addBonus').onclick=()=>{ DB.bonuses.push({id:id(),date:DB.schedule.year+'/'+pad2(DB.schedule.month)+'/01',staff:DB.staff[0]?DB.staff[0].name:'',product:'Google 5星好評',qty:0,reviews:0}); save(); viewBonus(); };
+  wireSave('saveBonus');
+}
+function selOpts(html,sel){ return html.replace('<option>'+sel+'</option>','<option selected>'+sel+'</option>'); }
+
+/* ============================== VIEW: PAYROLL ============================== */
+function viewPayroll(){
+  const rows=DB.staff.map(s=>({s,p:payrollFor(s)}));
+  const T=rows.reduce((a,{p})=>{ a.reg+=p.reg;a.ot+=p.ot;a.hol+=p.hol;a.base+=p.base;a.otPay+=p.otPay;a.holPay+=p.holPay;a.perfect+=p.perfect;a.bonusTotal+=p.bonusTotal;a.insurance+=p.insurance;a.net+=p.net; return a; },
+    {reg:0,ot:0,hol:0,base:0,otPay:0,holPay:0,perfect:0,bonusTotal:0,insurance:0,net:0});
+
+  V().innerHTML =
+    head('Payroll','月度薪資與獎金結算表',DB.schedule.year+' 年 '+DB.schedule.month+' 月　自打卡、排班與獎金紀錄自動核算。實領 = 基本＋加班＋假日加倍－扣款＋全勤＋獎金－勞健保。')+
+    '<div class="note">全勤獎金於下列任一情況歸零：<b>兼職同仁</b>、當月排班含<b>事假／病假</b>、或打卡考勤狀態非「正常」。目前「假別扣款」欄位保留為 0，可日後加入請假扣薪規則。</div>'+
+    '<div class="card"><div class="ch"><h3>核算總表</h3></div>'+
+    '<div class="cb flush scroll"><table class="tbl"><thead><tr>'+
+      '<th>員工</th><th>職稱</th><th class="num">時薪</th><th class="num">平日工時</th><th class="num">加班</th><th class="num">假日工時</th>'+
+      '<th class="num">基本薪資</th><th class="num">加班費</th><th class="num">假日加倍</th><th class="num">扣款</th><th class="num">全勤</th><th class="num">商品評論獎金</th><th class="num">勞健保</th><th class="num">實領總額</th>'+
+    '</tr></thead><tbody>'+
+      rows.map(({s,p})=>'<tr>'+
+        '<td><b>'+esc(s.name)+'</b></td><td class="muted">'+esc(s.title)+'</td>'+
+        '<td class="num tnum">'+fmt(s.hourly)+'</td>'+
+        '<td class="num tnum">'+r1(p.reg)+'</td>'+
+        '<td class="num tnum">'+r1(p.ot)+'</td>'+
+        '<td class="num tnum">'+r1(p.hol)+'</td>'+
+        '<td class="num tnum">'+fmt(p.base)+'</td>'+
+        '<td class="num tnum">'+fmt(p.otPay)+'</td>'+
+        '<td class="num tnum">'+fmt(p.holPay)+'</td>'+
+        '<td class="num tnum muted">'+fmt(p.leaveDeduct)+'</td>'+
+        '<td class="num tnum">'+(p.perfect?fmt(p.perfect):'<span class="muted">0</span>')+'</td>'+
+        '<td class="num tnum">'+fmt(p.bonusTotal)+'</td>'+
+        '<td class="num tnum">'+fmt(p.insurance)+'</td>'+
+        '<td class="num tnum ro">NT$ '+fmt(p.net)+'</td></tr>').join('')+
+    '</tbody><tbody class="total"><tr>'+
+        '<td>總計</td><td></td><td class="num tnum">'+fmt(rows.reduce((a,{s})=>a+(Number(s.hourly)||0),0))+'</td>'+
+        '<td class="num tnum">'+r1(T.reg)+'</td><td class="num tnum">'+r1(T.ot)+'</td><td class="num tnum">'+r1(T.hol)+'</td>'+
+        '<td class="num tnum">'+fmt(T.base)+'</td><td class="num tnum">'+fmt(T.otPay)+'</td><td class="num tnum">'+fmt(T.holPay)+'</td>'+
+        '<td class="num tnum">0</td><td class="num tnum">'+fmt(T.perfect)+'</td><td class="num tnum">'+fmt(T.bonusTotal)+'</td>'+
+        '<td class="num tnum">'+fmt(T.insurance)+'</td><td class="num tnum">NT$ '+fmt(T.net)+'</td></tr>'+
+    '</tbody></table></div></div>';
+}
+
+/* ============================== VIEW: PAYSLIP ============================== */
+let slipStaff=null;
+function viewPayslip(){
+  if(!slipStaff || !staffByName(slipStaff)) slipStaff = DB.staff[0] ? DB.staff[0].name : null;
+  const ctrl =
+    head('Pay Slip','電子薪資明細單',DB.schedule.year+' 年 '+DB.schedule.month+' 月份薪資明細，點「列印 / 存 PDF」開啟列印視窗，於目的地選「另存為 PDF」即可。')+
+    '<div class="card no-print"><div class="cb"><div class="miniform">'+
+      '<div class="fld"><label>請選擇員工</label><select id="slipSel" class="cell-in" style="min-width:180px">'+staffOpts(slipStaff)+'</select></div>'+
+      '<div class="fld"><label>發放日期</label><input id="slipDate" type="date" class="cell-in" value="'+esc((DB.payDate||'').replace(/\//g,'-'))+'" style="min-width:150px"></div>'+
+      '<button class="btn primary no-print" id="btnPrint" style="margin-left:6px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>列印 / 存 PDF</button>'+
+    '</div></div></div>';
+
+  const s=staffByName(slipStaff);
+  let slip='<div class="empty card">尚無同仁資料</div>';
+  if(s){
+    const p=payrollFor(s);
+    slip='<div class="slip"><div class="sh">'+
+      '<div><div class="l1">領航物理治療所　薪資明細</div><div class="l2">'+esc(s.name)+'</div></div>'+
+      '<div class="r">'+esc(s.title)+'<br>'+DB.schedule.year+' 年 '+DB.schedule.month+' 月份</div></div>'+
+      '<div class="sb">'+
+      '<div class="meta">'+
+        '<div><b>約定時薪</b>NT$ '+fmt(s.hourly)+' / 小時</div>'+
+        '<div><b>發放日期</b>'+esc(DB.payDate)+'</div>'+
+        '<div><b>出勤工時</b>平日 '+r1(p.reg)+' / 加班 '+r1(p.ot)+' / 假日 '+r1(p.hol)+' 小時</div>'+
+        '<div><b>全勤狀態</b>'+(p.voided?'<span class="badge b-warn">未達全勤</span>':'<span class="badge b-ok">符合全勤</span>')+'</div>'+
+      '</div>'+
+      '<div class="two">'+
+        '<div class="col pos"><h4>應給薪資項目 (+)</h4>'+
+          li('基本薪資',p.base)+li('勞基法超時加班費',p.otPay)+li('國定假日出勤加給',p.holPay)+li('商品與評論推廣獎金',p.bonusTotal)+li('考核全勤優異獎金',p.perfect)+
+        '</div>'+
+        '<div class="col neg"><h4>扣款與假別扣項 (−)</h4>'+
+          li('事假／病假缺勤扣款',p.leaveDeduct)+li('勞健保自付額扣款',p.insurance)+
+        '</div>'+
+      '</div>'+
+      '<div class="net"><div class="lab">本月實際發放總額 (Net Pay)</div><div class="v">NT$ '+fmt(p.net)+'</div></div>'+
+      '<div class="sign">'+
+        '<div>診所核章：（領航物理治療所）<div class="ln"></div></div>'+
+        '<div>同仁簽名確認：<div class="ln"></div></div>'+
+      '</div>'+
+    '</div></div>';
+  }
+  V().innerHTML = ctrl + slip;
+  const sel=document.getElementById('slipSel'); if(sel) sel.onchange=e=>{ slipStaff=e.target.value; viewPayslip(); };
+  const sd=document.getElementById('slipDate'); if(sd) sd.onchange=e=>{ DB.payDate=(e.target.value||'').replace(/-/g,'/'); save(); viewPayslip(); };
+  const pr=document.getElementById('btnPrint'); if(pr) pr.onclick=printSlip;
+}
+function li(lab,val){ return '<div class="li"><span>'+lab+'</span><span>NT$ '+fmt(val)+'</span></div>'; }
+/* Robust print / save-PDF: render the slip alone in a hidden iframe with self-contained CSS.
+   Avoids the SPA's flex/sticky layout and guarantees background colours are kept. */
+const SLIP_PRINT_CSS = `
+:root{ --ink:#0e2433; --muted:#5d758a; --faint:#9cb2c3; --line:#e4eef4; --line-2:#eef5f9;
+ --sky:#0ea5e9; --sky-700:#036aa1; --sky-50:#eef8fe; --sky-100:#dcf1fd;
+ --ok:#15a34a; --ok-bg:#e9f8ef; --warn:#c97a06; --warn-bg:#fdf2e1; --bad:#d6342c; --bad-bg:#fdecea; }
+*{ box-sizing:border-box; -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important }
+html,body{ margin:0; padding:0; background:#fff; color:var(--ink);
+ font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif; }
+.slip{ max-width:640px; margin:0 auto; background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden }
+.slip .sh{ background:linear-gradient(150deg,var(--sky),var(--sky-700)); color:#fff; padding:20px 24px; display:flex; align-items:center; justify-content:space-between }
+.slip .sh .l1{ font-size:12px; letter-spacing:2px; font-weight:700; opacity:.85 }
+.slip .sh .l2{ font-size:18px; font-weight:800; margin-top:3px }
+.slip .sh .r{ text-align:right; font-size:12px; opacity:.92 }
+.slip .sb{ padding:22px 24px }
+.slip .meta{ display:grid; grid-template-columns:1fr 1fr; gap:10px 24px; padding-bottom:16px; border-bottom:1px dashed var(--line); margin-bottom:16px }
+.slip .meta div{ font-size:13px } .slip .meta b{ color:var(--faint); font-weight:700; font-size:11.5px; letter-spacing:.5px; display:block; margin-bottom:2px }
+.slip .two{ display:grid; grid-template-columns:1fr 1fr; gap:26px }
+.slip .col h4{ margin:0 0 9px; font-size:12px; font-weight:800; letter-spacing:.5px; padding-bottom:7px; border-bottom:2px solid var(--line-2) }
+.slip .col.pos h4{ color:var(--ok) } .slip .col.neg h4{ color:var(--bad) }
+.slip .li{ display:flex; justify-content:space-between; padding:6px 0; font-size:13px; border-bottom:1px solid var(--line-2) }
+.slip .li span:last-child{ font-weight:700; font-variant-numeric:tabular-nums }
+.slip .net{ margin-top:18px; background:var(--sky-50); border:1px solid var(--sky-100); border-radius:11px; padding:14px 18px; display:flex; align-items:center; justify-content:space-between }
+.slip .net .lab{ font-size:13px; font-weight:800; color:var(--sky-700); letter-spacing:.5px }
+.slip .net .v{ font-size:26px; font-weight:800; color:var(--sky-700); font-variant-numeric:tabular-nums }
+.slip .sign{ margin-top:20px; padding-top:16px; border-top:1px dashed var(--line); display:grid; grid-template-columns:1fr 1fr; gap:12px 24px; font-size:12.5px; color:var(--muted) }
+.slip .sign .ln{ margin-top:14px; border-bottom:1px solid var(--ink); height:1px }
+.badge{ display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:999px; font-size:11.5px; font-weight:800; letter-spacing:.3px; white-space:nowrap }
+.b-ok{ background:var(--ok-bg); color:var(--ok) } .b-warn{ background:var(--warn-bg); color:var(--warn) } .b-bad{ background:var(--bad-bg); color:var(--bad) }
+@page{ margin:14mm }
+@media print{ .slip{ border:none; border-radius:0; max-width:none } }
+`;
+function printSlip(){
+  const el=document.querySelector('#view .slip');
+  if(!el){ window.print(); return; }
+  const title='薪資明細_'+(slipStaff||'')+'_'+DB.schedule.year+pad2(DB.schedule.month);
+  const doc='<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><title>'+title+
+    '</title><style>'+SLIP_PRINT_CSS+'</style></head><body>'+el.outerHTML+'</body></html>';
+  const ifr=document.createElement('iframe');
+  ifr.setAttribute('aria-hidden','true');
+  ifr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0';
+  document.body.appendChild(ifr);
+  const w=ifr.contentWindow, d=w.document;
+  d.open(); d.write(doc); d.close();
+  const go=()=>{ try{ w.focus(); w.print(); }catch(e){ /* fallback */ window.print(); }
+    setTimeout(()=>{ if(ifr.parentNode) ifr.parentNode.removeChild(ifr); }, 800); };
+  // Wait for fonts/layout to settle so the first print isn't blank.
+  if(d.fonts && d.fonts.ready){ d.fonts.ready.then(()=>setTimeout(go,120)); }
+  else { setTimeout(go,300); }
+}
+/* Print the monthly schedule in a clean landscape window (Save as PDF from the print
+   dialog). Avoids external libraries and blob downloads, which some webviews block. */
+function printSchedule(){
+  const card=document.getElementById('schedCard');
+  if(!card){ window.print(); return; }
+  const clone=card.cloneNode(true);
+  clone.querySelectorAll('#btnSchedPdf,.no-print').forEach(n=>n.remove());
+  clone.querySelectorAll('select').forEach(sel=>{
+    const opt=sel.querySelector('option[selected]'); const val=opt?opt.textContent.trim():'';
+    const c=document.createElement('div'); c.textContent=val; c.style.cssText='font-weight:700;text-align:center';
+    sel.parentNode.replaceChild(c,sel);
+  });
+  const css=Array.from(document.querySelectorAll('style')).map(s=>s.textContent).join('\n');
+  const extra='@page{size:A4 landscape;margin:8mm} html,body{background:#fff;margin:0;padding:10px}'+
+    ' .card{box-shadow:none!important;border:none!important;margin:0!important}'+
+    ' .scroll{overflow:visible!important} .sched th,.sched td,.sched .nm{position:static!important}'+
+    ' .ch .hint{display:none} .sched{font-size:10px} .sched th,.sched td{padding:3px 3px}'+
+    ' .sched .nm{min-width:84px}';
+  const title='排班表_'+DB.schedule.year+pad2(DB.schedule.month);
+  const doc='<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><title>'+title+
+    '</title><style>'+css+'\n'+extra+'</style></head><body>'+clone.outerHTML+'</body></html>';
+  const ifr=document.createElement('iframe'); ifr.setAttribute('aria-hidden','true');
+  ifr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0';
+  document.body.appendChild(ifr);
+  const w=ifr.contentWindow, d=w.document; d.open(); d.write(doc); d.close();
+  const go=()=>{ try{ w.focus(); w.print(); }catch(e){ window.print(); }
+    setTimeout(()=>{ if(ifr.parentNode) ifr.parentNode.removeChild(ifr); }, 900); };
+  if(d.fonts && d.fonts.ready){ d.fonts.ready.then(()=>setTimeout(go,180)); } else setTimeout(go,400);
+}
+document.getElementById('topYear').onchange=e=>{ DB.schedule.year=Number(e.target.value)||DB.schedule.year; save(); render(); };
+document.getElementById('topMonth').onchange=e=>{ let v=Number(e.target.value)||DB.schedule.month; v=Math.min(12,Math.max(1,v)); DB.schedule.month=v; save(); render(); };
+/* ---- robust backup: modal with download + clipboard + manual copy/paste fallbacks ---- */
+function closeOv(){ const o=document.getElementById('ov'); if(o) o.remove(); }
+function openOv(inner){
+  closeOv();
+  const o=document.createElement('div'); o.id='ov'; o.className='ov';
+  o.innerHTML='<div class="box">'+inner+'</div>';
+  o.addEventListener('click',e=>{ if(e.target===o) closeOv(); });
+  document.body.appendChild(o);
+  return o;
+}
+function confirmModal(title,msgHTML,okLabel,onOk){
+  openOv(
+    '<button class="x" id="cfX">&times;</button>'+
+    '<h3>'+esc(title)+'</h3>'+
+    '<p>'+msgHTML+'</p>'+
+    '<div class="row">'+
+      '<button class="btn" id="cfNo" style="flex:1;justify-content:center">取消</button>'+
+      '<button class="btn cfdanger" id="cfYes" style="flex:1;justify-content:center">'+esc(okLabel)+'</button>'+
+    '</div>'
+  );
+  document.getElementById('cfX').onclick=closeOv;
+  document.getElementById('cfNo').onclick=closeOv;
+  document.getElementById('cfYes').onclick=()=>{ closeOv(); onOk(); };
+}
+function tryDownload(text,fname){
+  try{
+    const blob=new Blob([text],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=fname;
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{ a.remove(); URL.revokeObjectURL(url); },300);
+    return true;
+  }catch(e){ return false; }
+}
+function copyText(text,cb){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>cb(true)).catch(()=>cb(legacyCopy(text)));
+  } else cb(legacyCopy(text));
+}
+function legacyCopy(text){
+  try{
+    const ta=document.getElementById('ovText')||document.createElement('textarea');
+    ta.value=text; ta.removeAttribute('readonly'); ta.focus(); ta.select(); ta.setSelectionRange(0,text.length);
+    const ok=document.execCommand('copy'); ta.setAttribute('readonly','readonly'); return ok;
+  }catch(e){ return false; }
+}
+document.getElementById('btnExport').onclick=()=>{
+  const text=JSON.stringify(DB,null,2);
+  const fname='領航管理系統備份_'+DB.schedule.year+pad2(DB.schedule.month)+'.json';
+  openOv(
+    '<button class="x" id="ovClose">&times;</button>'+
+    '<h3>匯出備份</h3>'+
+    '<p>建議按「下載 JSON 檔」。若瀏覽器擋下載（如 App 內建瀏覽器），改按「複製到剪貼簿」，再貼到記事本或檔案儲存即可。</p>'+
+    '<textarea id="ovText" readonly>'+esc(text)+'</textarea>'+
+    '<div class="ok" id="ovMsg"></div>'+
+    '<div class="row">'+
+      '<button class="btn primary" id="ovDl">下載 JSON 檔</button>'+
+      '<button class="btn" id="ovCopy">複製到剪貼簿</button>'+
+    '</div>'
+  );
+  document.getElementById('ovClose').onclick=closeOv;
+  document.getElementById('ovDl').onclick=()=>{
+    const ok=tryDownload(text,fname);
+    document.getElementById('ovMsg').textContent = ok ? '已觸發下載，請至下載資料夾查看。' : '下載被瀏覽器封鎖，請改用「複製到剪貼簿」。';
+  };
+  document.getElementById('ovCopy').onclick=()=>{
+    copyText(text,ok=>{ document.getElementById('ovMsg').textContent = ok ? '已複製，貼到記事本存成 .json 即可。' : '複製失敗，請手動選取上方文字複製。'; });
+  };
+};
+document.getElementById('btnImport').onclick=()=>{
+  openOv(
+    '<button class="x" id="ovClose">&times;</button>'+
+    '<h3>匯入備份</h3>'+
+    '<p>選擇先前下載的 JSON 檔，或直接把備份內容貼到下方欄位後按「匯入貼上內容」。</p>'+
+    '<div class="row" style="margin-top:0;margin-bottom:12px"><button class="btn primary" id="ovPick">選擇 JSON 檔…</button></div>'+
+    '<textarea id="ovText" placeholder="或將備份 JSON 內容貼在這裡…"></textarea>'+
+    '<div class="ok" id="ovMsg"></div>'+
+    '<div class="row"><button class="btn" id="ovDoImport">匯入貼上內容</button></div>'
+  );
+  document.getElementById('ovClose').onclick=closeOv;
+  document.getElementById('ovPick').onclick=()=>document.getElementById('fileImport').click();
+  document.getElementById('ovDoImport').onclick=()=>{
+    const raw=document.getElementById('ovText').value.trim();
+    if(!raw){ document.getElementById('ovMsg').textContent='請先貼上備份內容。'; return; }
+    applyImport(raw, msg=>{ document.getElementById('ovMsg').textContent=msg; });
+  };
+};
+function applyImport(raw,report){
+  try{
+    const d=JSON.parse(raw);
+    if(d&&d.staff&&d.schedule){ DB=d; save(); closeOv(); render(); alert('已匯入備份。'); }
+    else (report||alert)('檔案格式不符（缺少 staff／schedule 欄位）。');
+  }catch(err){ (report||alert)('無法解析此 JSON 內容，請確認是否完整。'); }
+}
+document.getElementById('fileImport').onchange=e=>{
+  const f=e.target.files[0]; if(!f) return; const rd=new FileReader();
+  rd.onload=()=>applyImport(rd.result); rd.readAsText(f); e.target.value='';
+};
+
+/* ============================== AUTH GATE ============================== */
+const ADMIN_USER='sky', ADMIN_PASS='000';
+let isAdmin=false;
+function boot(){
+  const gate=document.getElementById('gate'), app=document.getElementById('adminApp');
+  if(isAdmin){ gate.style.display='none'; app.style.display='flex'; render(); }
+  else{ app.style.display='none'; gate.style.display='block'; renderGate(); }
+}
+function openLogin(){
+  openOv(
+    '<button class="x" id="ovClose">&times;</button>'+
+    '<h3>後台登入</h3>'+
+    '<p>請輸入管理者帳號密碼以進入後台管理功能。前台打卡無需登入。</p>'+
+    '<div class="login">'+
+      '<div class="fld"><label>帳號</label><input id="luser" autocomplete="off" placeholder="帳號"></div>'+
+      '<div class="fld"><label>密碼</label><input id="lpass" type="password" autocomplete="off" placeholder="密碼"></div>'+
+      '<div class="err" id="lerr"></div>'+
+    '</div>'+
+    '<div class="row"><button class="btn primary" id="lgo" style="flex:1;justify-content:center">登入</button></div>'
+  );
+  document.getElementById('ovClose').onclick=closeOv;
+  const u=document.getElementById('luser'), p=document.getElementById('lpass'), err=document.getElementById('lerr');
+  const tryLogin=()=>{
+    if(u.value.trim()===ADMIN_USER && p.value===ADMIN_PASS){ isAdmin=true; closeOv(); current='dashboard'; boot(); }
+    else { err.textContent='帳號或密碼錯誤'; p.value=''; p.focus(); }
+  };
+  document.getElementById('lgo').onclick=tryLogin;
+  p.addEventListener('keydown',e=>{ if(e.key==='Enter') tryLogin(); });
+  u.addEventListener('keydown',e=>{ if(e.key==='Enter') p.focus(); });
+  setTimeout(()=>u.focus(),50);
+}
+document.getElementById('btnLogout').onclick=()=>{ isAdmin=false; boot(); };
+
+/* ============================== INIT ============================== */
+boot();
+</script>
+</body>
+</html>
