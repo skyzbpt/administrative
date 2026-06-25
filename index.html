@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>領航物理治療所 · 行政櫃檯管理系統</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
 <style>
 :root{
   --bg:#f4f9fc; --surface:#ffffff; --ink:#0e2433; --muted:#5d758a; --faint:#9cb2c3;
@@ -225,8 +227,9 @@ select.cell-in{cursor:pointer}
 .gbrand{display:flex;align-items:center;gap:12px}
 .gbrand .mark{width:42px;height:42px;border-radius:12px;background:linear-gradient(150deg,var(--sky),var(--sky-700));display:flex;align-items:center;justify-content:center}
 .gbrand .mark svg{width:24px;height:24px}
-/* logo hidden for now */
-.brand .mark,.gbrand .mark{display:none}
+/* logo image */
+.brand .mark,.gbrand .mark{background:#fff!important;overflow:hidden}
+.brand .mark img,.gbrand .mark img{width:100%;height:100%;object-fit:contain;display:block}
 .gbrand .t1{font-weight:800;font-size:17px;color:var(--ink);line-height:1.2}
 .gbrand .t2{font-size:12px;color:var(--faint);font-weight:600;letter-spacing:.5px}
 .gatebody{flex:1;width:100%;max-width:1100px;margin:0 auto;padding:24px 22px 48px}
@@ -255,7 +258,7 @@ select.cell-in{cursor:pointer}
 <div class="app" id="adminApp" style="display:none">
   <aside class="side">
     <div class="brand">
-      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 14c2.2 0 2.2-2.6 4.4-2.6S8.6 14 10.8 14 13 11.4 15.2 11.4 17.4 14 19.6 14 22 11.4 22 11.4"/><path d="M2 18.4c2.2 0 2.2-2.6 4.4-2.6s2.2 2.6 4.4 2.6 2.2-2.6 4.4-2.6 2.2 2.6 4.4 2.6"/><path d="M12 3l2.2 4.4L19 8l-3.4 3.1.9 4.9-4.5-2.5"/></svg></div>
+      <div class="mark"><img src="logo.png" alt="領航物理治療所"></div>
       <div><div class="t1">領航物理治療所</div><div class="t2">行政後台</div></div>
     </div>
     <nav class="nav" id="nav"></nav>
@@ -492,7 +495,7 @@ function viewDashboard(){
   V().innerHTML =
     head('Operations','院長營運分析儀表板','本月 ('+DB.schedule.year+' 年 '+DB.schedule.month+' 月) 行政櫃檯核心營運指標，隨參數與紀錄即時連動。')+
     '<div class="kpis">'+
-      kpi('本月行政薪資總支出','M3 5h18v14H3zM3 10h18','NT$ '+fmt(totalNet),'三位同仁實領薪資加總')+
+      kpi('本月行政薪資總支出','M3 5h18v14H3zM3 10h18','NT$ '+fmt(totalNet),DB.staff.length+' 位行政同仁實領薪資加總')+
       kpi('商品銷售提撥總獎金','M20 12v8H4v-8M2 7h20v5H2z','NT$ '+fmt(prodSub),'不含評論推廣獎金')+
       kpi('衝刺 Google 評論總則數','M12 2l2.9 6.3L22 9l-5 4.6 1.3 6.9L12 17l-6.3 3.5L7 13.6 2 9l7.1-.7z',fmt(reviews)+' 則','五星好評累積引導')+
     '</div>'+
@@ -708,7 +711,7 @@ function kioskCards(){
 function renderGate(){
   if(window.__kioskTimer){ clearInterval(window.__kioskTimer); window.__kioskTimer=null; }
   const ds=todayStr(); const ho=isHoliday(ds);
-  const mark='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 14c2.2 0 2.2-2.6 4.4-2.6S8.6 14 10.8 14 13 11.4 15.2 11.4 17.4 14 19.6 14 22 11.4 22 11.4"/><path d="M2 18.4c2.2 0 2.2-2.6 4.4-2.6s2.2 2.6 4.4 2.6 2.2-2.6 4.4-2.6 2.2 2.6 4.4 2.6"/><path d="M12 3l2.2 4.4L19 8l-3.4 3.1.9 4.9-4.5-2.5"/></svg>';
+  const mark='<img src="logo.png" alt="領航物理治療所">';
   document.getElementById('gate').innerHTML =
     '<div class="gatewrap">'+
       '<div class="gatebar">'+
@@ -926,6 +929,31 @@ html,body{ margin:0; padding:0; background:#fff; color:var(--ink);
 @page{ margin:14mm }
 @media print{ .slip{ border:none; border-radius:0; max-width:none } }
 `;
+/* iOS/iPadOS Safari 無法從隱藏 iframe 列印（且 iPad 會偽裝成 Mac），改開新分頁；桌機維持隱藏 iframe */
+function isIOS(){
+  return /iP(hone|ad|od)/.test(navigator.platform)
+    || (/Mac/.test(navigator.platform) && navigator.maxTouchPoints>1)
+    || /iPhone|iPad|iPod/.test(navigator.userAgent);
+}
+function openPrint(docHtml){
+  if(isIOS()){
+    const hint='<div class="noprint-hint" style="position:fixed;left:0;right:0;bottom:0;padding:11px 14px;background:#0284c7;color:#fff;font-size:13px;line-height:1.5;text-align:center;z-index:99999">若未自動跳出列印，請點 Safari「分享」鈕 →「列印」，在預覽畫面用雙指向外放大後，即可用分享鈕儲存 PDF</div>'
+      +'<style>@media print{.noprint-hint{display:none!important}}</style>'
+      +'<script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},700);<\/script>';
+    const out=docHtml.replace('</body>', hint+'</body>');
+    const w=window.open('','_blank');
+    if(!w){ alert('瀏覽器擋住了新分頁，請允許彈出視窗後再按一次。'); return; }
+    w.document.open(); w.document.write(out); w.document.close();
+    return;
+  }
+  const ifr=document.createElement('iframe'); ifr.setAttribute('aria-hidden','true');
+  ifr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0';
+  document.body.appendChild(ifr);
+  const w=ifr.contentWindow, d=w.document; d.open(); d.write(docHtml); d.close();
+  const go=()=>{ try{w.focus();w.print();}catch(e){window.print();}
+    setTimeout(()=>{if(ifr.parentNode)ifr.parentNode.removeChild(ifr);},900); };
+  if(d.fonts&&d.fonts.ready){d.fonts.ready.then(()=>setTimeout(go,200));}else setTimeout(go,420);
+}
 /* Combined PDF：行政排班總表 + 個人薪資明細單（橫向 A4）*/
 function printCombined(){
   const s=staffByName(slipStaff); if(!s) return;
@@ -970,13 +998,7 @@ function printCombined(){
     +'<div class="sec" style="margin-top:6px">薪資明細單　'+esc(s.name)+'　'+y+' 年 '+m+' 月</div>'
     +(slipEl?slipEl.outerHTML:'<p style="color:#9cb2c3">請先切換至電子薪資明細單頁面再列印</p>')
     +'</body></html>';
-  const ifr=document.createElement('iframe'); ifr.setAttribute('aria-hidden','true');
-  ifr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0';
-  document.body.appendChild(ifr);
-  const w=ifr.contentWindow, d_=w.document; d_.open(); d_.write(html); d_.close();
-  const go=()=>{ try{w.focus();w.print();}catch(e){window.print();}
-    setTimeout(()=>{if(ifr.parentNode)ifr.parentNode.removeChild(ifr);},900); };
-  if(d_.fonts&&d_.fonts.ready){d_.fonts.ready.then(()=>setTimeout(go,200));}else setTimeout(go,420);
+  openPrint(html);
 }
 
 /* Print the monthly schedule in a clean landscape window (Save as PDF from the print
@@ -1000,13 +1022,7 @@ function printSchedule(){
   const title='排班表_'+DB.schedule.year+pad2(DB.schedule.month);
   const doc='<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><title>'+title+
     '</title><style>'+css+'\n'+extra+'</style></head><body>'+clone.outerHTML+'</body></html>';
-  const ifr=document.createElement('iframe'); ifr.setAttribute('aria-hidden','true');
-  ifr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0';
-  document.body.appendChild(ifr);
-  const w=ifr.contentWindow, d=w.document; d.open(); d.write(doc); d.close();
-  const go=()=>{ try{ w.focus(); w.print(); }catch(e){ window.print(); }
-    setTimeout(()=>{ if(ifr.parentNode) ifr.parentNode.removeChild(ifr); }, 900); };
-  if(d.fonts && d.fonts.ready){ d.fonts.ready.then(()=>setTimeout(go,180)); } else setTimeout(go,400);
+  openPrint(doc);
 }
 document.getElementById('topYear').onchange=e=>{ DB.schedule.year=Number(e.target.value)||DB.schedule.year; save(); render(); };
 document.getElementById('topMonth').onchange=e=>{ let v=Number(e.target.value)||DB.schedule.month; v=Math.min(12,Math.max(1,v)); DB.schedule.month=v; save(); render(); };
