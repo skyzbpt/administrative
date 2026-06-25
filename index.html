@@ -145,6 +145,9 @@ select.cell-in{cursor:pointer}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);padding:2px 2px 0}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .dot{width:9px;height:9px;border-radius:3px;display:inline-block}
+.weekblock{margin-bottom:18px}
+.weekblock:last-child{margin-bottom:0}
+.weeklabel{font-size:12px;font-weight:800;color:var(--sky-700);letter-spacing:.6px;margin:0 0 7px;padding-left:2px}
 
 /* ---------- Payslip ---------- */
 .slip{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
@@ -289,7 +292,7 @@ select.cell-in{cursor:pointer}
 <script>
 /* ============================== SEED ============================== */
 const SEED_PRODUCTS = [{"name": "仁術-筋膜按壓器（藍）", "bonus": 19}, {"name": "仁術-筋膜按壓器（綠）", "bonus": 19}, {"name": "仁術-筋膜球（藍）", "bonus": 19}, {"name": "仁術-筋膜球（粉）", "bonus": 19}, {"name": "艾羅力-滾筒（藍45）", "bonus": 54}, {"name": "艾羅力-滾筒（藍90）", "bonus": 94}, {"name": "小黑豹-滾筒", "bonus": 50}, {"name": "星星相挺-坐墊（黑）", "bonus": 82}, {"name": "星星相挺-坐墊（藍綠）", "bonus": 82}, {"name": "小樂浪-筋膜球（藍）", "bonus": 18}, {"name": "小樂浪-筋膜球（綠）", "bonus": 18}, {"name": "小樂浪-筋膜球（灰）", "bonus": 18}, {"name": "綠能浩克-護脊滾棒", "bonus": 50}, {"name": "星力環-肌力訓練繩", "bonus": 48}, {"name": "修臀日記-翹臀圈一組", "bonus": 72}, {"name": "RockPods", "bonus": 140}, {"name": "RockFloss", "bonus": 48}, {"name": "筋膜球（綠）", "bonus": 21}, {"name": "筋膜球（橘）", "bonus": 21}, {"name": "筋膜球（紅）", "bonus": 21}, {"name": "花生球", "bonus": 39}, {"name": "迷彩小滾筒", "bonus": 44}, {"name": "剛勁款滾筒", "bonus": 116}, {"name": "滾輪按摩棒", "bonus": 39}, {"name": "平衡訓練磚", "bonus": 116}, {"name": "肌貼（經典款）", "bonus": 42}, {"name": "反應訓練球", "bonus": 17}, {"name": "彈力帶1.5m（橘色）", "bonus": 11}, {"name": "彈力帶1.5m（綠色）", "bonus": 12}, {"name": "彈力帶1.5m（藍色）", "bonus": 13}, {"name": "彈力帶2.5m（橘色）", "bonus": 18}, {"name": "彈力帶2.5m（綠色）", "bonus": 20}, {"name": "彈力帶2.5m（藍色）", "bonus": 21}, {"name": "平衡訓練氣墊", "bonus": 97}, {"name": "保護貼", "bonus": 59}, {"name": "雷可貼布", "bonus": 92}, {"name": "五趾襪（M）曜黑灰", "bonus": 15}, {"name": "五趾襪（M）天藍灰", "bonus": 15}, {"name": "五趾襪（M）竹青灰", "bonus": 15}, {"name": "五趾襪（M）丈藍粉", "bonus": 15}, {"name": "五趾襪（L）丈藍灰", "bonus": 15}, {"name": "五趾襪（L）曜黑灰", "bonus": 15}, {"name": "五趾襪（L）松綠灰", "bonus": 15}, {"name": "五趾襪（XL）曜黑綠", "bonus": 15}, {"name": "坐墊（黑）", "bonus": 100}, {"name": "坐墊（灰）", "bonus": 100}, {"name": "坐墊（藍）", "bonus": 100}, {"name": "坐墊（紅）", "bonus": 100}, {"name": "動態貼布（膚色5cm）", "bonus": 53}, {"name": "動態貼布（花色5cm）", "bonus": 53}, {"name": "動態貼布（膚色7.5cm）", "bonus": 85}, {"name": "動態貼布（花色7.5cm）", "bonus": 85}, {"name": "360 拇指型護腕 (左：S、M)", "bonus": 53}, {"name": "360 拇指型護腕 (右：S、M)", "bonus": 53}, {"name": "360 拇指型護腕 (左：L、XL)", "bonus": 53}, {"name": "360 拇指型護腕 (右：L、XL)", "bonus": 53}, {"name": "360 髕骨型護膝 (左右通用：S/M)", "bonus": 76}, {"name": "360 髕骨型護膝 (左右通用：L/XL)", "bonus": 76}, {"name": "360 8 字穩固護踝 (左右通用：S)", "bonus": 53}, {"name": "360 8 字穩固護踝 (左右通用：M)", "bonus": 53}, {"name": "360 8 字穩固護踝 (左右通用：L)", "bonus": 53}, {"name": "超肌感貼紮長臂套 (左右通用：S)", "bonus": 66}, {"name": "超肌感貼紮長臂套 (左右通用：M)", "bonus": 66}, {"name": "超肌感貼紮長臂套 (左右通用：L)", "bonus": 66}, {"name": "超肌感貼紮長臂套 (左右通用：XL)", "bonus": 66}, {"name": "超肌感貼紮長腿套 (左右通用：S)", "bonus": 105}, {"name": "超肌感貼紮長腿套 (左右通用：M)", "bonus": 105}, {"name": "超肌感貼紮長腿套 (左右通用：L)", "bonus": 105}, {"name": "超肌感貼紮長腿套 (左右通用：XL)", "bonus": 105}, {"name": "超肌感貼紮長腿套 (左右通用：2XL)", "bonus": 105}, {"name": "日夜拇指外翻套 (左：S)", "bonus": 71}, {"name": "日夜拇指外翻套 (右：S)", "bonus": 71}, {"name": "日夜拇指外翻套 (左：Ｌ)", "bonus": 71}, {"name": "日夜拇指外翻套 (右：Ｌ)", "bonus": 71}, {"name": "AIDER 護腕 （黑）", "bonus": 105}, {"name": "AIDER 護腕 （白）", "bonus": 105}, {"name": "AIDER 護腕 （米粉）", "bonus": 105}, {"name": "AIDER 護腕 （天空藍）", "bonus": 105}, {"name": "AIDER 護腕 （紫）", "bonus": 105}, {"name": "壓縮褲（男款） (尺寸：S)", "bonus": 193}, {"name": "壓縮褲（男款） (尺寸：M)", "bonus": 193}, {"name": "壓縮褲（男款） (尺寸：L)", "bonus": 193}, {"name": "壓縮褲（男款） (尺寸：XL)", "bonus": 193}, {"name": "壓縮褲（女款） (尺寸：S)", "bonus": 193}, {"name": "壓縮褲（女款） (尺寸：M)", "bonus": 193}, {"name": "壓縮褲（女款） (尺寸：L)", "bonus": 193}, {"name": "壓縮褲（女款） (尺寸：XL)", "bonus": 193}, {"name": "「可塑型」多功能護腰 (尺寸：S、M）", "bonus": 187}, {"name": "「可塑型」多功能護腰 (尺寸：L、XL）", "bonus": 187}, {"name": "保濕美容凝膠頸套", "bonus": 57}, {"name": "保濕美容凝膠手肘套", "bonus": 57}, {"name": "保濕美容凝膠手套", "bonus": 50}, {"name": "保濕美容凝膠足跟套", "bonus": 68}, {"name": "保濕美容凝膠足套", "bonus": 53}, {"name": "筋膜球（黃）", "bonus": 21}];
-const SEED_HOLIDAYS = [{"date": "2026/01/01", "name": "元旦"}, {"date": "2026/02/16", "name": "除夕"}, {"date": "2026/02/17", "name": "春節"}, {"date": "2026/04/03", "name": "兒童節"}, {"date": "2026/04/04", "name": "清明節"}, {"date": "2026/07/02", "name": "測試國定假日"}, {"date": "2026/09/25", "name": "中秋節"}, {"date": "2026/10/10", "name": "國慶日"}];
+const SEED_HOLIDAYS = [];
 
 function seed(){
   return {
@@ -544,7 +547,7 @@ function viewParams(){
     '<div class="card"><div class="ch"><h3>區塊三 · 國定假日控管庫</h3><span class="hint">排班表自動標紅底</span><div class="spacer"></div>'+saveBtnHTML('saveHol')+'</div>'+
     '<div class="cb flush scroll"><table class="tbl"><thead><tr><th>日期 (YYYY/MM/DD)</th><th>節日名稱</th><th></th></tr></thead>'+
     '<tbody id="holBody">'+ DB.holidays.map((h,i)=>holRow(h,i)).join('') +'</tbody></table></div>'+
-    '<div class="cb"><button class="addbtn" id="addHol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>新增假日</button></div></div>'+
+    '<div class="cb" style="display:flex;gap:8px;flex-wrap:wrap"><button class="addbtn" id="addHol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>新增假日</button><button class="btn sm" id="clearHol" style="color:var(--bad)">清空全部</button></div></div>'+
     '</div>'+
 
     /* products */
@@ -572,6 +575,7 @@ function viewParams(){
   // holidays
   bindCells('holBody',(i,k,val)=>{ DB.holidays[i][k]=(k==='date')?val.replace(/-/g,'/'):val; save(); });
   document.getElementById('addHol').onclick=()=>{ DB.holidays.push({date:DB.schedule.year+'/01/01',name:'新節日'}); save(); viewParams(); };
+  document.getElementById('clearHol').onclick=()=>{ if(!DB.holidays.length) return; confirmModal('清空全部假日','確定要刪除國定假日控管庫裡的全部 '+DB.holidays.length+' 筆資料嗎？此動作無法復原。','確定清空',()=>{ DB.holidays=[]; save(); viewParams(); }); };
   delBtns('holBody', i=>{ DB.holidays.splice(i,1); save(); viewParams(); });
   // products
   const ps=document.getElementById('prodSearch');
@@ -641,33 +645,48 @@ function viewSchedule(){
   const y=DB.schedule.year, m=DB.schedule.month;
   const days=new Date(y,m,0).getDate();
   const wk=['日','一','二','三','四','五','六'];
-  let head_=''; for(let d=1; d<=days; d++){ const dt=new Date(y,m-1,d); const jd=dt.getDay(); const we=(jd===0||jd===6); const ho=isHoliday(ymd(d)); head_+='<th class="'+(ho?'ho':we?'we':'')+'" title="'+(ho?holidayName(ymd(d)):'')+'">'+d+'<br><span style="font-weight:600">'+wk[jd]+'</span></th>'; }
+  const ymd=d=>y+'/'+pad2(m)+'/'+pad2(d);
 
-  const body = DB.staff.map(s=>{
-    let cells=''; let hrs=0;
-    for(let d=1; d<=days; d++){ const dt=new Date(y,m-1,d); const jd=dt.getDay(); const we=(jd===0||jd===6); const ho=isHoliday(ymd(d));
-      const cur=DB.schedule.shifts[s.name+'__'+d]||'';
-      if(SHIFT_HOURS[cur]) hrs+=SHIFT_HOURS[cur];
-      cells+='<td class="day '+(ho?'ho':we?'we':'')+'"><select data-name="'+esc(s.name)+'" data-day="'+d+'">'+
-        SHIFT_OPTS.map(o=>'<option '+(o===cur?'selected':'')+'>'+o+'</option>').join('')+'</select></td>';
-    }
-    const pay=hrs*(Number(s.hourly)||0);
-    return '<tr><td class="nm">'+esc(s.name)+'</td>'+cells+'<td class="tot">'+hrs+' hr<br><span style="font-weight:600;color:var(--faint)">NT$ '+fmt(pay)+'</span></td></tr>';
-  }).join('');
+  // 每 7 天一段
+  let blocks='';
+  for(let start=1; start<=days; start+=7){
+    const end=Math.min(start+6, days);
+    let head_='';
+    for(let d=start; d<=end; d++){ const jd=new Date(y,m-1,d).getDay(); const we=(jd===0||jd===6); const ho=isHoliday(ymd(d)); head_+='<th class="'+(ho?'ho':we?'we':'')+'" title="'+(ho?esc(holidayName(ymd(d))):'')+'">'+d+'<br><span style="font-weight:600">'+wk[jd]+'</span></th>'; }
+    let body='';
+    DB.staff.forEach(s=>{
+      let cells=''; let hrs=0;
+      for(let d=start; d<=end; d++){ const jd=new Date(y,m-1,d).getDay(); const we=(jd===0||jd===6); const ho=isHoliday(ymd(d));
+        const cur=DB.schedule.shifts[s.name+'__'+d]||'';
+        if(SHIFT_HOURS[cur]) hrs+=SHIFT_HOURS[cur];
+        cells+='<td class="day '+(ho?'ho':we?'we':'')+'"><select data-name="'+esc(s.name)+'" data-day="'+d+'">'+SHIFT_OPTS.map(o=>'<option '+(o===cur?'selected':'')+'>'+o+'</option>').join('')+'</select></td>';
+      }
+      body+='<tr><td class="nm">'+esc(s.name)+'</td>'+cells+'<td class="tot">'+hrs+' hr</td></tr>';
+    });
+    let chk='<tr class="chk"><td class="nm">每日櫃檯人力確認</td>';
+    for(let d=start; d<=end; d++){ chk+='<td>'+staffingBadge(d)+'</td>'; }
+    chk+='<td class="tot"></td></tr>';
+    blocks+='<div class="weekblock"><div class="weeklabel">'+m+' 月 '+start+'–'+end+' 日</div>'+
+      '<div class="scroll"><table class="sched"><thead><tr><th class="nm">行政人員</th>'+head_+'<th class="tot">本週工時</th></tr></thead>'+
+      '<tbody>'+body+chk+'</tbody></table></div></div>';
+  }
 
-  // 人力確認 row
-  let chk='<tr class="chk"><td class="nm">每日櫃檯人力確認</td>';
-  for(let d=1; d<=days; d++){ chk+='<td>'+staffingBadge(d)+'</td>'; }
-  chk+='<td class="tot"></td></tr>';
+  // 本月總計（整月工時與估薪）
+  let sumRows='';
+  DB.staff.forEach(s=>{
+    let hrs=0;
+    for(let d=1; d<=days; d++){ const v=DB.schedule.shifts[s.name+'__'+d]; if(SHIFT_HOURS[v]) hrs+=SHIFT_HOURS[v]; }
+    sumRows+='<tr><td><b>'+esc(s.name)+'</b></td><td class="num tnum">'+hrs+' 小時</td><td class="num tnum">NT$ '+fmt(hrs*(Number(s.hourly)||0))+'</td></tr>';
+  });
+  const sumTbl = DB.staff.length ? ('<div class="weekblock"><div class="weeklabel">本月總計</div><div class="scroll"><table class="tbl"><thead><tr><th style="min-width:120px">行政人員</th><th class="num">整月總工時</th><th class="num">估算薪資</th></tr></thead><tbody>'+sumRows+'</tbody></table></div></div>') : '';
 
   V().innerHTML =
-    head('Schedule','每月排班表',y+' 年 '+m+' 月　班別代碼：A 早午班 / B 午晚班（8h）、C 早班 / D 午班 / E 晚班（4h）。人力規則：每時段至少 1 人，平日（一～五）需<b>早、午、晚</b>都有人，假日（六、日）需<b>早、午</b>有人。國定假日自動標紅底。')+
+    head('Schedule','每月排班表',y+' 年 '+m+' 月　每 7 天為一段顯示。班別：A 早午班 / B 午晚班（8h）、C 早班 / D 午班 / E 晚班（4h）。人力規則：平日需早、午、晚都有人，假日需早、午有人。國定假日自動標紅底。')+
     '<div class="card" id="schedCard"><div class="ch"><h3>'+y+' 年 '+m+' 月　行政櫃檯排班</h3><div class="spacer"></div>'+
       '<span class="hint">點儲存格選擇班別</span>'+
       '<button class="btn sm no-print" id="btnSchedPdf" style="margin-left:10px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>另存PDF</button></div>'+
-    '<div class="cb flush scroll"><table class="sched"><thead><tr><th class="nm">行政人員</th>'+head_+'<th class="tot">總工時 / 估薪</th></tr></thead>'+
-    '<tbody>'+body+chk+'</tbody></table></div>'+
-    '<div class="cb"><div class="legend">'+
+    '<div class="cb">'+blocks+sumTbl+'</div>'+
+    '<div class="cb" style="padding-top:0"><div class="legend">'+
       '<span><i class="dot" style="background:var(--bad-bg);border:1px solid var(--bad)"></i>國定假日</span>'+
       '<span><i class="dot" style="background:#f4fbff;border:1px solid var(--sky-100)"></i>週末</span>'+
       '<span><span class="badge b-ok">✓ OK</span>人力足夠</span>'+
@@ -675,7 +694,6 @@ function viewSchedule(){
       '<span><span class="badge b-bad">❌ 休診</span>全天無班</span>'+
     '</div></div></div>';
 
-  function ymd(d){ return y+'/'+pad2(m)+'/'+pad2(d); }
   document.querySelectorAll('.sched select').forEach(sel=>{
     sel.onchange=()=>{ const key=sel.dataset.name+'__'+sel.dataset.day; if(sel.value) DB.schedule.shifts[key]=sel.value; else delete DB.schedule.shifts[key]; save(); viewSchedule(); };
   });
@@ -872,9 +890,12 @@ function viewPayroll(){
 }
 
 /* ============================== VIEW: PAYSLIP ============================== */
+function defaultPayDate(){ let y=DB.schedule.year, m=DB.schedule.month+1; if(m>12){ m=1; y++; } return y+'/'+pad2(m)+'/10'; }
 let slipStaff=null;
 function viewPayslip(){
   if(!slipStaff || !staffByName(slipStaff)) slipStaff = DB.staff[0] ? DB.staff[0].name : null;
+  const _ym = DB.schedule.year+'/'+pad2(DB.schedule.month);
+  if(DB.payDateFor !== _ym){ DB.payDate = defaultPayDate(); DB.payDateFor = _ym; }
   const ctrl =
     head('Pay Slip','電子薪資明細單',DB.schedule.year+' 年 '+DB.schedule.month+' 月份薪資明細，點「另存PDF」開啟列印視窗，於目的地選「另存為 PDF」即可。')+
     '<div class="card no-print"><div class="cb">'+
