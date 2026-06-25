@@ -275,8 +275,8 @@ select.cell-in{cursor:pointer}
         <span class="sep">月</span>
       </div>
       <span id="syncBadge" class="badge" style="display:none"></span>
-      <button class="btn" id="btnPull"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M3 21v-5h5"/></svg>雲端同步</button>
-      <button class="btn" id="btnCloudSettings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>雲端設定</button>
+      <button class="btn" id="btnPull" onclick="pullFromCloud().then(ok=>{if(ok)render();})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M3 21v-5h5"/></svg>雲端同步</button>
+      <button class="btn" id="btnCloudSettings" onclick="openCloudSettings()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>雲端設定</button>
       <button class="btn" id="btnExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>匯出備份</button>
       <button class="btn" id="btnImport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></svg>匯入</button>
       <input type="file" id="fileImport" accept="application/json" style="display:none">
@@ -852,11 +852,13 @@ function viewPayslip(){
   if(!slipStaff || !staffByName(slipStaff)) slipStaff = DB.staff[0] ? DB.staff[0].name : null;
   const ctrl =
     head('Pay Slip','電子薪資明細單',DB.schedule.year+' 年 '+DB.schedule.month+' 月份薪資明細，點「列印 / 存 PDF」開啟列印視窗，於目的地選「另存為 PDF」即可。')+
-    '<div class="card no-print"><div class="cb"><div class="miniform">'+
-      '<div class="fld"><label>請選擇員工</label><select id="slipSel" class="cell-in" style="min-width:180px">'+staffOpts(slipStaff)+'</select></div>'+
-      '<div class="fld"><label>發放日期</label><input id="slipDate" type="date" class="cell-in" value="'+esc((DB.payDate||'').replace(/\//g,'-'))+'" style="min-width:150px"></div>'+
-      '<button class="btn primary no-print" id="btnPrint" style="margin-left:6px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>列印 / 存 PDF</button>'+
-    '</div></div></div>';
+    '<div class="card no-print"><div class="cb">'+
+      '<div class="miniform" style="margin-bottom:12px">'+
+        '<div class="fld"><label>請選擇員工</label><select id="slipSel" class="cell-in" style="min-width:180px">'+staffOpts(slipStaff)+'</select></div>'+
+        '<div class="fld"><label>發放日期</label><input id="slipDate" type="date" class="cell-in" value="'+esc((DB.payDate||'').replace(/\//g,'-'))+'" style="min-width:150px"></div>'+
+      '</div>'+
+      '<button class="btn primary no-print" id="btnPrint" style="width:100%;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>列印排班＋薪資 PDF</button>'+
+    '</div></div>';
 
   const s=staffByName(slipStaff);
   let slip='<div class="empty card">尚無同仁資料</div>';
@@ -890,11 +892,9 @@ function viewPayslip(){
   V().innerHTML = ctrl + slip;
   const sel=document.getElementById('slipSel'); if(sel) sel.onchange=e=>{ slipStaff=e.target.value; viewPayslip(); };
   const sd=document.getElementById('slipDate'); if(sd) sd.onchange=e=>{ DB.payDate=(e.target.value||'').replace(/-/g,'/'); save(); viewPayslip(); };
-  const pr=document.getElementById('btnPrint'); if(pr) pr.onclick=printSlip;
+  const pr=document.getElementById('btnPrint'); if(pr) pr.onclick=printCombined;
 }
 function li(lab,val){ return '<div class="li"><span>'+lab+'</span><span>NT$ '+fmt(val)+'</span></div>'; }
-/* Robust print / save-PDF: render the slip alone in a hidden iframe with self-contained CSS.
-   Avoids the SPA's flex/sticky layout and guarantees background colours are kept. */
 const SLIP_PRINT_CSS = `
 :root{ --ink:#0e2433; --muted:#5d758a; --faint:#9cb2c3; --line:#e4eef4; --line-2:#eef5f9;
  --sky:#0ea5e9; --sky-700:#036aa1; --sky-50:#eef8fe; --sky-100:#dcf1fd;
@@ -925,24 +925,59 @@ html,body{ margin:0; padding:0; background:#fff; color:var(--ink);
 @page{ margin:14mm }
 @media print{ .slip{ border:none; border-radius:0; max-width:none } }
 `;
-function printSlip(){
-  const el=document.querySelector('#view .slip');
-  if(!el){ window.print(); return; }
-  const title='薪資明細_'+(slipStaff||'')+'_'+DB.schedule.year+pad2(DB.schedule.month);
-  const doc='<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><title>'+title+
-    '</title><style>'+SLIP_PRINT_CSS+'</style></head><body>'+el.outerHTML+'</body></html>';
-  const ifr=document.createElement('iframe');
-  ifr.setAttribute('aria-hidden','true');
+/* Combined PDF：行政排班總表 + 個人薪資明細單（橫向 A4）*/
+function printCombined(){
+  const s=staffByName(slipStaff); if(!s) return;
+  const y=DB.schedule.year, m=DB.schedule.month;
+  const days=new Date(y,m,0).getDate();
+  const wk=['日','一','二','三','四','五','六'];
+  const ymd=d=>y+'/'+pad2(m)+'/'+pad2(d);
+  // 排班表 header
+  let thead='<tr><th style="min-width:72px;text-align:left;padding:4px 6px">員工</th>';
+  for(let d=1;d<=days;d++){
+    const jd=new Date(y,m-1,d).getDay(); const ho=isHoliday(ymd(d)); const we=(jd===0||jd===6);
+    thead+='<th style="'+(ho?'background:#fdecea;color:#d6342c':we?'background:#f4fbff':'')+'">'
+      +d+'<br><span style="font-weight:600">'+wk[jd]+'</span></th>';
+  }
+  thead+='<th style="border-left:2px solid #0ea5e9">時</th></tr>';
+  // 排班表 rows
+  let tbody='';
+  DB.staff.forEach(st=>{
+    let cells=''; let hrs=0;
+    for(let d=1;d<=days;d++){
+      const v=DB.schedule.shifts[st.name+'__'+d]||'';
+      if(SHIFT_HOURS[v]) hrs+=SHIFT_HOURS[v];
+      const jd=new Date(y,m-1,d).getDay(); const ho=isHoliday(ymd(d)); const we=(jd===0||jd===6);
+      cells+='<td style="text-align:center;'+(ho?'background:#fdecea':we?'background:#f4fbff':'')+'">'+esc(v)+'</td>';
+    }
+    tbody+='<tr><td style="font-weight:700;white-space:nowrap;padding:5px 6px">'+esc(st.name)+'</td>'
+      +cells+'<td style="font-weight:800;text-align:center;color:#036aa1;border-left:2px solid #0ea5e9">'+hrs+'</td></tr>';
+  });
+  const slipEl=document.querySelector('#view .slip');
+  const html='<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><title>排班薪資_'+y+pad2(m)+'_'+esc(s.name)+'</title>'
+    +'<style>*{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}'
+    +'body{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;margin:0;padding:14px;background:#fff;color:#0e2433}'
+    +'.sec{font-size:13px;font-weight:800;color:#036aa1;border-bottom:2px solid #0ea5e9;padding-bottom:5px;margin:0 0 11px;letter-spacing:.5px}'
+    +'table{border-collapse:collapse;width:100%;font-size:9.5px;margin-bottom:22px}'
+    +'th,td{border:1px solid #e4eef4;padding:4px 2px;text-align:center}'
+    +'th{background:#eef8fe;font-weight:800;color:#5d758a}'
+    +SLIP_PRINT_CSS
+    +'@page{size:A4 landscape;margin:10mm}'
+    +'</style></head><body>'
+    +'<div class="sec">領航物理治療所　'+y+' 年 '+m+' 月　行政排班總表</div>'
+    +'<table><thead>'+thead+'</thead><tbody>'+tbody+'</tbody></table>'
+    +'<div class="sec" style="margin-top:6px">薪資明細單　'+esc(s.name)+'　'+y+' 年 '+m+' 月</div>'
+    +(slipEl?slipEl.outerHTML:'<p style="color:#9cb2c3">請先切換至電子薪資明細單頁面再列印</p>')
+    +'</body></html>';
+  const ifr=document.createElement('iframe'); ifr.setAttribute('aria-hidden','true');
   ifr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0';
   document.body.appendChild(ifr);
-  const w=ifr.contentWindow, d=w.document;
-  d.open(); d.write(doc); d.close();
-  const go=()=>{ try{ w.focus(); w.print(); }catch(e){ /* fallback */ window.print(); }
-    setTimeout(()=>{ if(ifr.parentNode) ifr.parentNode.removeChild(ifr); }, 800); };
-  // Wait for fonts/layout to settle so the first print isn't blank.
-  if(d.fonts && d.fonts.ready){ d.fonts.ready.then(()=>setTimeout(go,120)); }
-  else { setTimeout(go,300); }
+  const w=ifr.contentWindow, d_=w.document; d_.open(); d_.write(html); d_.close();
+  const go=()=>{ try{w.focus();w.print();}catch(e){window.print();}
+    setTimeout(()=>{if(ifr.parentNode)ifr.parentNode.removeChild(ifr);},900); };
+  if(d_.fonts&&d_.fonts.ready){d_.fonts.ready.then(()=>setTimeout(go,200));}else setTimeout(go,420);
 }
+
 /* Print the monthly schedule in a clean landscape window (Save as PDF from the print
    dialog). Avoids external libraries and blob downloads, which some webviews block. */
 function printSchedule(){
