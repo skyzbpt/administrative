@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>領航物理治療所 · 行政櫃檯管理系統</title>
-<link rel="icon" type="image/png" href="logo.png">
-<link rel="apple-touch-icon" href="logo.png">
+<link rel="icon" type="image/png" href="logo.png?v=2">
+<link rel="shortcut icon" type="image/png" href="logo.png?v=2">
+<link rel="apple-touch-icon" href="logo.png?v=2">
 <style>
 :root{
   --bg:#f4f9fc; --surface:#ffffff; --ink:#0e2433; --muted:#5d758a; --faint:#9cb2c3;
@@ -146,7 +147,7 @@ select.cell-in{cursor:pointer}
 .dot{width:9px;height:9px;border-radius:3px;display:inline-block}
 
 /* ---------- Payslip ---------- */
-.slip{max-width:620px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.slip{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
 .slip .sh{background:linear-gradient(150deg,var(--sky),var(--sky-700));color:#fff;padding:20px 24px;display:flex;align-items:center;justify-content:space-between}
 .slip .sh .l1{font-size:12px;letter-spacing:2px;font-weight:700;opacity:.85}
 .slip .sh .l2{font-size:18px;font-weight:800;margin-top:3px}
@@ -561,7 +562,7 @@ function viewParams(){
   document.getElementById('pOt2').onchange=e=>{ DB.params.otRate2=Number(e.target.value)||0; save(); };
   document.getElementById('pHol').onchange=e=>{ DB.params.holRate=Number(e.target.value)||0; save(); };
   // holidays
-  bindCells('holBody',(i,k,val)=>{ DB.holidays[i][k]=val; save(); });
+  bindCells('holBody',(i,k,val)=>{ DB.holidays[i][k]=(k==='date')?val.replace(/-/g,'/'):val; save(); });
   document.getElementById('addHol').onclick=()=>{ DB.holidays.push({date:DB.schedule.year+'/01/01',name:'新節日'}); save(); viewParams(); };
   delBtns('holBody', i=>{ DB.holidays.splice(i,1); save(); viewParams(); });
   // products
@@ -592,7 +593,7 @@ function staffRow(s,i){ return '<tr data-i="'+i+'">'+
   '<td class="num"><input class="cell-in" data-k="insurance" type="number" value="'+s.insurance+'" style="text-align:right"></td>'+
   '<td><button class="del" data-del="'+i+'">&times;</button></td></tr>'; }
 function holRow(h,i){ return '<tr data-i="'+i+'">'+
-  '<td><input class="cell-in" data-k="date" value="'+esc(h.date)+'" placeholder="2026/01/01"></td>'+
+  '<td><input type="date" class="cell-in" data-k="date" value="'+esc((h.date||'').replace(/\//g,'-'))+'"></td>'+
   '<td><input class="cell-in" data-k="name" value="'+esc(h.name)+'"></td>'+
   '<td><button class="del" data-del="'+i+'">&times;</button></td></tr>'; }
 function prodRows(){
@@ -828,7 +829,7 @@ function viewPayroll(){
       '<th class="num">基本薪資</th><th class="num">加班費</th><th class="num">假日加倍</th><th class="num">扣款</th><th class="num">全勤</th><th class="num">商品評論獎金</th><th class="num">勞健保</th><th class="num">實領總額</th>'+
     '</tr></thead><tbody>'+
       rows.map(({s,p})=>'<tr>'+
-        '<td><b>'+esc(s.name)+'</b></td><td class="muted">'+esc(s.title)+'</td>'+
+        '<td style="white-space:nowrap"><b>'+esc(s.name)+'</b></td><td class="muted">'+esc(s.title)+'</td>'+
         '<td class="num tnum">'+fmt(s.hourly)+'</td>'+
         '<td class="num tnum">'+r1(p.reg)+'</td>'+
         '<td class="num tnum">'+r1(p.ot)+'</td>'+
@@ -896,7 +897,7 @@ function viewPayslip(){
   V().innerHTML = ctrl + slip;
   const sel=document.getElementById('slipSel'); if(sel) sel.onchange=e=>{ slipStaff=e.target.value; viewPayslip(); };
   const sd=document.getElementById('slipDate'); if(sd) sd.onchange=e=>{ DB.payDate=(e.target.value||'').replace(/-/g,'/'); save(); viewPayslip(); };
-  const pr=document.getElementById('btnPrint'); if(pr) pr.onclick=printCombined;
+  const pr=document.getElementById('btnPrint'); if(pr) pr.onclick=printSlip;
 }
 function li(lab,val){ return '<div class="li"><span>'+lab+'</span><span>NT$ '+fmt(val)+'</span></div>'; }
 const SLIP_PRINT_CSS = `
@@ -953,6 +954,18 @@ function openPrint(docHtml){
   const go=()=>{ try{w.focus();w.print();}catch(e){window.print();}
     setTimeout(()=>{if(ifr.parentNode)ifr.parentNode.removeChild(ifr);},900); };
   if(d.fonts&&d.fonts.ready){d.fonts.ready.then(()=>setTimeout(go,200));}else setTimeout(go,420);
+}
+/* 薪資明細 PDF：只印個人薪資明細單（直向 A4）*/
+function printSlip(){
+  const s=staffByName(slipStaff); if(!s) return;
+  const slipEl=document.querySelector('#view .slip');
+  if(!slipEl){ alert('找不到薪資明細，請先選擇員工。'); return; }
+  const y=DB.schedule.year, m=DB.schedule.month;
+  const html='<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><title>薪資明細_'+y+pad2(m)+'_'+esc(s.name)+'</title>'
+    +'<style>'+SLIP_PRINT_CSS+'@page{size:A4 portrait;margin:14mm}</style></head><body>'
+    +slipEl.outerHTML
+    +'</body></html>';
+  openPrint(html);
 }
 /* Combined PDF：行政排班總表 + 個人薪資明細單（橫向 A4）*/
 function printCombined(){
