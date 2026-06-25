@@ -277,9 +277,6 @@ select.cell-in{cursor:pointer}
       <span id="syncBadge" class="badge" style="display:none"></span>
       <button class="btn" id="btnPull" onclick="pullFromCloud().then(ok=>{if(ok)render();})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M3 21v-5h5"/></svg>雲端同步</button>
       <button class="btn" id="btnCloudSettings" onclick="openCloudSettings()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>雲端設定</button>
-      <button class="btn" id="btnExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>匯出備份</button>
-      <button class="btn" id="btnImport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></svg>匯入</button>
-      <input type="file" id="fileImport" accept="application/json" style="display:none">
     </div>
     <div class="wrap"><div id="view"></div></div>
   </div>
@@ -639,7 +636,7 @@ function viewSchedule(){
     head('Schedule','每月排班表',y+' 年 '+m+' 月　班別代碼：A 早午班 / B 午晚班（8h）、C 早班 / D 午班 / E 晚班（4h）。人力規則：每時段至少 1 人，平日（一～五）需<b>早、午、晚</b>都有人，假日（六、日）需<b>早、午</b>有人。國定假日自動標紅底。')+
     '<div class="card" id="schedCard"><div class="ch"><h3>'+y+' 年 '+m+' 月　行政櫃檯排班</h3><div class="spacer"></div>'+
       '<span class="hint">點儲存格選擇班別</span>'+
-      '<button class="btn sm no-print" id="btnSchedPdf" style="margin-left:10px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>列印 / 存 PDF</button></div>'+
+      '<button class="btn sm no-print" id="btnSchedPdf" style="margin-left:10px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>另存PDF</button></div>'+
     '<div class="cb flush scroll"><table class="sched"><thead><tr><th class="nm">行政人員</th>'+head_+'<th class="tot">總工時 / 估薪</th></tr></thead>'+
     '<tbody>'+body+chk+'</tbody></table></div>'+
     '<div class="cb"><div class="legend">'+
@@ -851,13 +848,13 @@ let slipStaff=null;
 function viewPayslip(){
   if(!slipStaff || !staffByName(slipStaff)) slipStaff = DB.staff[0] ? DB.staff[0].name : null;
   const ctrl =
-    head('Pay Slip','電子薪資明細單',DB.schedule.year+' 年 '+DB.schedule.month+' 月份薪資明細，點「列印 / 存 PDF」開啟列印視窗，於目的地選「另存為 PDF」即可。')+
+    head('Pay Slip','電子薪資明細單',DB.schedule.year+' 年 '+DB.schedule.month+' 月份薪資明細，點「另存PDF」開啟列印視窗，於目的地選「另存為 PDF」即可。')+
     '<div class="card no-print"><div class="cb">'+
       '<div class="miniform" style="margin-bottom:12px">'+
         '<div class="fld"><label>請選擇員工</label><select id="slipSel" class="cell-in" style="min-width:180px">'+staffOpts(slipStaff)+'</select></div>'+
         '<div class="fld"><label>發放日期</label><input id="slipDate" type="date" class="cell-in" value="'+esc((DB.payDate||'').replace(/\//g,'-'))+'" style="min-width:150px"></div>'+
       '</div>'+
-      '<button class="btn primary no-print" id="btnPrint" style="width:100%;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>列印排班＋薪資 PDF</button>'+
+      '<button class="btn primary no-print" id="btnPrint" style="width:100%;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>另存PDF</button>'+
     '</div></div>';
 
   const s=staffByName(slipStaff);
@@ -1033,80 +1030,7 @@ function confirmModal(title,msgHTML,okLabel,onOk){
   document.getElementById('cfNo').onclick=closeOv;
   document.getElementById('cfYes').onclick=()=>{ closeOv(); onOk(); };
 }
-function tryDownload(text,fname){
-  try{
-    const blob=new Blob([text],{type:'application/json'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a'); a.href=url; a.download=fname;
-    document.body.appendChild(a); a.click();
-    setTimeout(()=>{ a.remove(); URL.revokeObjectURL(url); },300);
-    return true;
-  }catch(e){ return false; }
-}
-function copyText(text,cb){
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(()=>cb(true)).catch(()=>cb(legacyCopy(text)));
-  } else cb(legacyCopy(text));
-}
-function legacyCopy(text){
-  try{
-    const ta=document.getElementById('ovText')||document.createElement('textarea');
-    ta.value=text; ta.removeAttribute('readonly'); ta.focus(); ta.select(); ta.setSelectionRange(0,text.length);
-    const ok=document.execCommand('copy'); ta.setAttribute('readonly','readonly'); return ok;
-  }catch(e){ return false; }
-}
-document.getElementById('btnExport').onclick=()=>{
-  const text=JSON.stringify(DB,null,2);
-  const fname='領航管理系統備份_'+DB.schedule.year+pad2(DB.schedule.month)+'.json';
-  openOv(
-    '<button class="x" id="ovClose">&times;</button>'+
-    '<h3>匯出備份</h3>'+
-    '<p>建議按「下載 JSON 檔」。若瀏覽器擋下載（如 App 內建瀏覽器），改按「複製到剪貼簿」，再貼到記事本或檔案儲存即可。</p>'+
-    '<textarea id="ovText" readonly>'+esc(text)+'</textarea>'+
-    '<div class="ok" id="ovMsg"></div>'+
-    '<div class="row">'+
-      '<button class="btn primary" id="ovDl">下載 JSON 檔</button>'+
-      '<button class="btn" id="ovCopy">複製到剪貼簿</button>'+
-    '</div>'
-  );
-  document.getElementById('ovClose').onclick=closeOv;
-  document.getElementById('ovDl').onclick=()=>{
-    const ok=tryDownload(text,fname);
-    document.getElementById('ovMsg').textContent = ok ? '已觸發下載，請至下載資料夾查看。' : '下載被瀏覽器封鎖，請改用「複製到剪貼簿」。';
-  };
-  document.getElementById('ovCopy').onclick=()=>{
-    copyText(text,ok=>{ document.getElementById('ovMsg').textContent = ok ? '已複製，貼到記事本存成 .json 即可。' : '複製失敗，請手動選取上方文字複製。'; });
-  };
-};
-document.getElementById('btnImport').onclick=()=>{
-  openOv(
-    '<button class="x" id="ovClose">&times;</button>'+
-    '<h3>匯入備份</h3>'+
-    '<p>選擇先前下載的 JSON 檔，或直接把備份內容貼到下方欄位後按「匯入貼上內容」。</p>'+
-    '<div class="row" style="margin-top:0;margin-bottom:12px"><button class="btn primary" id="ovPick">選擇 JSON 檔…</button></div>'+
-    '<textarea id="ovText" placeholder="或將備份 JSON 內容貼在這裡…"></textarea>'+
-    '<div class="ok" id="ovMsg"></div>'+
-    '<div class="row"><button class="btn" id="ovDoImport">匯入貼上內容</button></div>'
-  );
-  document.getElementById('ovClose').onclick=closeOv;
-  document.getElementById('ovPick').onclick=()=>document.getElementById('fileImport').click();
-  document.getElementById('ovDoImport').onclick=()=>{
-    const raw=document.getElementById('ovText').value.trim();
-    if(!raw){ document.getElementById('ovMsg').textContent='請先貼上備份內容。'; return; }
-    applyImport(raw, msg=>{ document.getElementById('ovMsg').textContent=msg; });
-  };
-};
-function applyImport(raw,report){
-  try{
-    const d=JSON.parse(raw);
-    if(d&&d.staff&&d.schedule){ DB=d; save(); closeOv(); render(); alert('已匯入備份。'); }
-    else (report||alert)('檔案格式不符（缺少 staff／schedule 欄位）。');
-  }catch(err){ (report||alert)('無法解析此 JSON 內容，請確認是否完整。'); }
-}
-document.getElementById('fileImport').onchange=e=>{
-  const f=e.target.files[0]; if(!f) return; const rd=new FileReader();
-  rd.onload=()=>applyImport(rd.result); rd.readAsText(f); e.target.value='';
-};
+/* 匯出／匯入功能已移除 */
 
 /* ============================== AUTH GATE ============================== */
 const ADMIN_USER='sky', ADMIN_PASS='000';
