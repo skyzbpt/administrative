@@ -841,7 +841,7 @@ function viewPunch(){
   const rows=DB.punches.map((p,i)=>{
     const h=punchHours(p), ot=punchOT(p), hol=punchHol(p); const ho=isHoliday(p.date);
     return '<tr data-i="'+i+'">'+
-      '<td><input class="cell-in" data-k="date" value="'+esc(p.date)+'" style="width:108px">'+(ho?'<div style="margin-top:3px"><span class="badge b-bad">'+esc(holidayName(p.date))+'</span></div>':'')+'</td>'+
+      '<td><input type="date" class="cell-in" data-k="date" value="'+esc((p.date||'').replace(/\//g,'-'))+'" style="width:150px">'+(ho?'<div style="margin-top:3px"><span class="badge b-bad">'+esc(holidayName(p.date))+'</span></div>':'')+'</td>'+
       '<td><select class="cell-in" data-k="staff" style="min-width:120px">'+staffSelect(p.staff)+'</select></td>'+
       '<td><select class="cell-in" data-k="shift" style="width:80px">'+SHIFT_OPTS.map(o=>'<option '+(o===p.shift?'selected':'')+'>'+o+'</option>').join('')+'</select></td>'+
       '<td><input class="cell-in" data-k="in1" type="time" value="'+esc(p.in1)+'" style="width:120px"></td>'+
