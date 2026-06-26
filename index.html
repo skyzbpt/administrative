@@ -512,7 +512,7 @@ const VIEWS=[
   {id:'payroll',label:'月度薪資結算',icon:'M3 5h18v14H3zM3 10h18M7 15h4'},
   {id:'payslip',label:'電子薪資明細單',icon:'M6 2h9l5 5v15H6zM15 2v5h5M9 13h6M9 17h6M9 9h2'},
 ];
-let current='dashboard';
+let current='dashboard', _lastView=null;
 function buildNav(){
   document.getElementById('nav').innerHTML = VIEWS.map(v=>
     '<button data-v="'+v.id+'" class="'+(v.id===current?'on':'')+'">'+
@@ -528,13 +528,14 @@ function render(){
   document.getElementById('topYear').value=DB.schedule.year;
   document.getElementById('topMonth').value=DB.schedule.month;
   ({dashboard:viewDashboard,params:viewParams,schedule:viewSchedule,punch:viewPunch,bonus:viewBonus,payroll:viewPayroll,payslip:viewPayslip}[current])();
-  window.scrollTo(0,0);
+  if(_lastView!==current){ window.scrollTo(0,0); _lastView=current; }
 }
 function head(eyebrow,title,desc){
   return '<div class="head"><div class="eyebrow">'+eyebrow+'</div><h2>'+title+'</h2>'+(desc?'<p>'+desc+'</p>':'')+'</div>';
 }
 const V=()=>document.getElementById('view');
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function keepScroll(fn){ const y=window.scrollY||window.pageYOffset||0; fn(); window.scrollTo(0,y); }
 function staffOpts(sel){ return DB.staff.map(s=>'<option '+(s.name===sel?'selected':'')+'>'+esc(s.name)+'</option>').join(''); }
 function staffSelect(sel){
   let opts=DB.staff.map(s=>'<option '+(s.name===sel?'selected':'')+'>'+esc(s.name)+'</option>').join('');
@@ -614,8 +615,8 @@ function viewParams(){
 
   // staff events
   bindCells('staffBody', (i,k,val)=>{ DB.staff[i][k] = (k==='name'||k==='title')?val:(Number(val)||0); save(); });
-  document.getElementById('addStaff').onclick=()=>{ DB.staff.push({name:'新同仁',title:'櫃檯行政',hourly:185,perfect:0,insurance:0}); save(); viewParams(); };
-  delBtns('staffBody', i=>{ const nm=DB.staff[i]?DB.staff[i].name:'此同仁'; confirmModal('刪除同仁','確定要刪除「<b>'+esc(nm)+'</b>」嗎？刪除後此同仁的薪資將不再計算（已建立的打卡與獎金紀錄不會自動移除）。此動作無法復原。','確定刪除',()=>{ DB.staff.splice(i,1); save(); viewParams(); }); });
+  document.getElementById('addStaff').onclick=()=>{ DB.staff.push({name:'新同仁',title:'櫃檯行政',hourly:185,perfect:0,insurance:0}); save(); keepScroll(viewParams); };
+  delBtns('staffBody', i=>{ const nm=DB.staff[i]?DB.staff[i].name:'此同仁'; confirmModal('刪除同仁','確定要刪除「<b>'+esc(nm)+'</b>」嗎？刪除後此同仁的薪資將不再計算（已建立的打卡與獎金紀錄不會自動移除）。此動作無法復原。','確定刪除',()=>{ DB.staff.splice(i,1); save(); keepScroll(viewParams); }); });
   // params
   document.getElementById('pGoogle').onchange=e=>{ DB.params.googleReview=Number(e.target.value)||0; save(); };
   document.getElementById('pOt1').onchange=e=>{ DB.params.otRate1=Number(e.target.value)||0; save(); };
@@ -623,21 +624,21 @@ function viewParams(){
   document.getElementById('pHol').onchange=e=>{ DB.params.holRate=Number(e.target.value)||0; save(); };
   // holidays
   bindCells('holBody',(i,k,val)=>{ DB.holidays[i][k]=(k==='date')?val.replace(/-/g,'/'):val; save(); });
-  document.getElementById('addHol').onclick=()=>{ DB.holidays.push({date:DB.schedule.year+'/01/01',name:'新節日'}); save(); viewParams(); };
-  document.getElementById('clearHol').onclick=()=>{ if(!DB.holidays.length) return; confirmModal('清空全部假日','確定要刪除國定假日控管庫裡的全部 '+DB.holidays.length+' 筆資料嗎？此動作無法復原。','確定清空',()=>{ DB.holidays=[]; save(); viewParams(); }); };
-  delBtns('holBody', i=>{ DB.holidays.splice(i,1); save(); viewParams(); });
+  document.getElementById('addHol').onclick=()=>{ DB.holidays.push({date:DB.schedule.year+'/01/01',name:'新節日'}); save(); keepScroll(viewParams); };
+  document.getElementById('clearHol').onclick=()=>{ if(!DB.holidays.length) return; confirmModal('清空全部假日','確定要刪除國定假日控管庫裡的全部 '+DB.holidays.length+' 筆資料嗎？此動作無法復原。','確定清空',()=>{ DB.holidays=[]; save(); keepScroll(viewParams); }); };
+  delBtns('holBody', i=>{ DB.holidays.splice(i,1); save(); keepScroll(viewParams); });
   // products
   const ps=document.getElementById('prodSearch');
   ps.oninput=e=>{ prodFilter=e.target.value; document.getElementById('prodBody').innerHTML=prodRows(); bindProd(); };
-  document.getElementById('addProd').onclick=()=>{ DB.products.unshift({name:'新商品',bonus:0}); prodFilter=''; save(); viewParams(); };
+  document.getElementById('addProd').onclick=()=>{ DB.products.unshift({name:'新商品',bonus:0}); prodFilter=''; save(); keepScroll(viewParams); };
   bindProd();
   // admins
   bindCells('adminBody',(i,k,val)=>{ DB.admins[i][k]=val; save(); });
-  document.getElementById('addAdmin').onclick=()=>{ if(!DB.admins) DB.admins=[]; DB.admins.push({user:'新管理員',pass:''}); save(); viewParams(); };
+  document.getElementById('addAdmin').onclick=()=>{ if(!DB.admins) DB.admins=[]; DB.admins.push({user:'新管理員',pass:''}); save(); keepScroll(viewParams); };
   delBtns('adminBody', i=>{
     if((DB.admins||[]).length<=1){ alert('系統至少需保留一位管理員，無法刪除最後一位。'); return; }
     const nm=DB.admins[i]?DB.admins[i].user:'此帳號';
-    confirmModal('刪除管理員','確定要刪除管理員「<b>'+esc(nm)+'</b>」嗎？刪除後此帳號將無法登入後台。','確定刪除',()=>{ DB.admins.splice(i,1); save(); viewParams(); });
+    confirmModal('刪除管理員','確定要刪除管理員「<b>'+esc(nm)+'</b>」嗎？刪除後此帳號將無法登入後台。','確定刪除',()=>{ DB.admins.splice(i,1); save(); keepScroll(viewParams); });
   });
   ['saveStaff','saveParams','saveHol','saveProd','saveAdmin'].forEach(wireSave);
 }
@@ -744,7 +745,7 @@ function viewSchedule(){
     '</div></div></div>';
 
   document.querySelectorAll('.sched select').forEach(sel=>{
-    sel.onchange=()=>{ const key=sel.dataset.name+'__'+sel.dataset.day; if(sel.value) DB.schedule.shifts[key]=sel.value; else delete DB.schedule.shifts[key]; save(); viewSchedule(); };
+    sel.onchange=()=>{ const key=sel.dataset.name+'__'+sel.dataset.day; if(sel.value) DB.schedule.shifts[key]=sel.value; else delete DB.schedule.shifts[key]; save(); keepScroll(viewSchedule); };
   });
   const sp=document.getElementById('btnSchedPdf'); if(sp) sp.onclick=printSchedule;
 }
@@ -837,6 +838,26 @@ function manualOpts(sel){
   if(s!=='' && !found){ o+='<option value="'+esc(s)+'" selected>'+esc(s)+' 小時（自訂）</option>'; }
   return o;
 }
+function rerenderPunch(){
+  const y=window.scrollY||window.pageYOffset||0;
+  const old=document.getElementById('punchBody');
+  const ow=old&&old.closest?old.closest('.scroll'):null;
+  const x=ow?ow.scrollLeft:0;
+  viewPunch();
+  window.scrollTo(0,y);
+  const nw=document.getElementById('punchBody');
+  const wrap=nw&&nw.closest?nw.closest('.scroll'):null;
+  if(wrap) wrap.scrollLeft=x;
+}
+function refreshPunchRow(i){
+  const p=DB.punches[i]; if(!p) return;
+  const tr=document.querySelector('#punchBody tr[data-i="'+i+'"]'); if(!tr) return;
+  const h=punchHours(p), ot=punchOT(p), hol=punchHol(p);
+  const td=tr.children;
+  if(td[9]) td[9].innerHTML=h;
+  if(td[10]) td[10].innerHTML=(ot?'<span class="badge b-warn">'+ot+'</span>':'0');
+  if(td[11]) td[11].innerHTML=(hol?'<span class="badge b-bad">'+hol+'</span>':'0');
+}
 function viewPunch(){
   const rows=DB.punches.map((p,i)=>{
     const h=punchHours(p), ot=punchOT(p), hol=punchHol(p); const ho=isHoliday(p.date);
@@ -866,11 +887,17 @@ function viewPunch(){
     '</tr></thead><tbody id="punchBody">'+rows+'</tbody></table></div>'+
     '<div class="cb"><button class="addbtn" id="addPunch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>新增打卡</button></div></div>';
 
-  bindCells('punchBody',(i,k,val)=>{ DB.punches[i][k]=(k==='date')?String(val).trim().replace(/-/g,'/'):val; save(); viewPunch(); });
-  delBtns('punchBody', i=>{ DB.punches.splice(i,1); save(); viewPunch(); });
+  bindCells('punchBody',(i,k,val)=>{
+    DB.punches[i][k]=(k==='date')?String(val).trim().replace(/-/g,'/'):val;
+    save();
+    if(k==='date') rerenderPunch();                       // 日期會影響國定假日標記，需重繪
+    else if(['in1','out1','in2','out2','manual'].includes(k)) refreshPunchRow(i); // 時間/覆核：只就地更新該列數字，不打斷輸入
+    // 員工 / 班別 / 狀態：不影響該列工時顯示，僅儲存即可
+  });
+  delBtns('punchBody', i=>{ DB.punches.splice(i,1); save(); rerenderPunch(); });
   document.getElementById('addPunch').onclick=()=>{
     DB.punches.push({id:id(),date:DB.schedule.year+'/'+pad2(DB.schedule.month)+'/01',staff:DB.staff[0]?DB.staff[0].name:'',shift:'A',in1:'',out1:'',in2:'',out2:'',manual:'',status:'正常'});
-    save(); viewPunch();
+    save(); rerenderPunch();
   };
   wireSave('savePunch');
 }
@@ -904,12 +931,11 @@ function viewBonus(){
     '</tr></thead><tbody id="bonusBody">'+rows+'</tbody></table></div>'+
     '<div class="cb"><button class="addbtn" id="addBonus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>新增獎金紀錄</button></div></div>';
 
-  bindCells('bonusBody',(i,k,val)=>{ DB.bonuses[i][k]=(k==='qty'||k==='reviews')?(Number(val)||0):(k==='date'?String(val).trim().replace(/-/g,'/'):val); save(); viewBonus(); });
-  delBtns('bonusBody', i=>{ DB.bonuses.splice(i,1); save(); viewBonus(); });
-  document.getElementById('addBonus').onclick=()=>{ DB.bonuses.push({id:id(),date:DB.schedule.year+'/'+pad2(DB.schedule.month)+'/01',staff:DB.staff[0]?DB.staff[0].name:'',product:'Google 5星好評',qty:0,reviews:0}); save(); viewBonus(); };
+  bindCells('bonusBody',(i,k,val)=>{ DB.bonuses[i][k]=(k==='qty'||k==='reviews')?(Number(val)||0):(k==='date'?String(val).trim().replace(/-/g,'/'):val); save(); keepScroll(viewBonus); });
+  delBtns('bonusBody', i=>{ DB.bonuses.splice(i,1); save(); keepScroll(viewBonus); });
+  document.getElementById('addBonus').onclick=()=>{ DB.bonuses.push({id:id(),date:DB.schedule.year+'/'+pad2(DB.schedule.month)+'/01',staff:DB.staff[0]?DB.staff[0].name:'',product:'Google 5星好評',qty:0,reviews:0}); save(); keepScroll(viewBonus); };
   wireSave('saveBonus');
 }
-function selOpts(html,sel){ return html.replace('<option>'+sel+'</option>','<option selected>'+sel+'</option>'); }
 
 /* ============================== VIEW: PAYROLL ============================== */
 function viewPayroll(){
@@ -995,8 +1021,8 @@ function viewPayslip(){
     '</div></div>';
   }
   V().innerHTML = ctrl + slip;
-  const sel=document.getElementById('slipSel'); if(sel) sel.onchange=e=>{ slipStaff=e.target.value; viewPayslip(); };
-  const sd=document.getElementById('slipDate'); if(sd) sd.onchange=e=>{ DB.payDate=(e.target.value||'').replace(/-/g,'/'); save(); viewPayslip(); };
+  const sel=document.getElementById('slipSel'); if(sel) sel.onchange=e=>{ slipStaff=e.target.value; keepScroll(viewPayslip); };
+  const sd=document.getElementById('slipDate'); if(sd) sd.onchange=e=>{ DB.payDate=(e.target.value||'').replace(/-/g,'/'); save(); keepScroll(viewPayslip); };
   const pr=document.getElementById('btnPrint'); if(pr) pr.onclick=printSlip;
 }
 function li(lab,val){ return '<div class="li"><span>'+lab+'</span><span>NT$ '+fmt(val)+'</span></div>'; }
