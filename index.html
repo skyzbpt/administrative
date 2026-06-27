@@ -319,7 +319,6 @@ select.cell-in{cursor:pointer}
 <script>
 /* ============================== SEED ============================== */
 const SEED_PRODUCTS = [{"name": "仁術-筋膜按壓器（藍）", "bonus": 19}, {"name": "仁術-筋膜按壓器（綠）", "bonus": 19}, {"name": "仁術-筋膜球（藍）", "bonus": 19}, {"name": "仁術-筋膜球（粉）", "bonus": 19}, {"name": "艾羅力-滾筒（藍45）", "bonus": 54}, {"name": "艾羅力-滾筒（藍90）", "bonus": 94}, {"name": "小黑豹-滾筒", "bonus": 50}, {"name": "星星相挺-坐墊（黑）", "bonus": 82}, {"name": "星星相挺-坐墊（藍綠）", "bonus": 82}, {"name": "小樂浪-筋膜球（藍）", "bonus": 18}, {"name": "小樂浪-筋膜球（綠）", "bonus": 18}, {"name": "小樂浪-筋膜球（灰）", "bonus": 18}, {"name": "綠能浩克-護脊滾棒", "bonus": 50}, {"name": "星力環-肌力訓練繩", "bonus": 48}, {"name": "修臀日記-翹臀圈一組", "bonus": 72}, {"name": "RockPods", "bonus": 140}, {"name": "RockFloss", "bonus": 48}, {"name": "筋膜球（綠）", "bonus": 21}, {"name": "筋膜球（橘）", "bonus": 21}, {"name": "筋膜球（紅）", "bonus": 21}, {"name": "花生球", "bonus": 39}, {"name": "迷彩小滾筒", "bonus": 44}, {"name": "剛勁款滾筒", "bonus": 116}, {"name": "滾輪按摩棒", "bonus": 39}, {"name": "平衡訓練磚", "bonus": 116}, {"name": "肌貼（經典款）", "bonus": 42}, {"name": "反應訓練球", "bonus": 17}, {"name": "彈力帶1.5m（橘色）", "bonus": 11}, {"name": "彈力帶1.5m（綠色）", "bonus": 12}, {"name": "彈力帶1.5m（藍色）", "bonus": 13}, {"name": "彈力帶2.5m（橘色）", "bonus": 18}, {"name": "彈力帶2.5m（綠色）", "bonus": 20}, {"name": "彈力帶2.5m（藍色）", "bonus": 21}, {"name": "平衡訓練氣墊", "bonus": 97}, {"name": "保護貼", "bonus": 59}, {"name": "雷可貼布", "bonus": 92}, {"name": "五趾襪（M）曜黑灰", "bonus": 15}, {"name": "五趾襪（M）天藍灰", "bonus": 15}, {"name": "五趾襪（M）竹青灰", "bonus": 15}, {"name": "五趾襪（M）丈藍粉", "bonus": 15}, {"name": "五趾襪（L）丈藍灰", "bonus": 15}, {"name": "五趾襪（L）曜黑灰", "bonus": 15}, {"name": "五趾襪（L）松綠灰", "bonus": 15}, {"name": "五趾襪（XL）曜黑綠", "bonus": 15}, {"name": "坐墊（黑）", "bonus": 100}, {"name": "坐墊（灰）", "bonus": 100}, {"name": "坐墊（藍）", "bonus": 100}, {"name": "坐墊（紅）", "bonus": 100}, {"name": "動態貼布（膚色5cm）", "bonus": 53}, {"name": "動態貼布（花色5cm）", "bonus": 53}, {"name": "動態貼布（膚色7.5cm）", "bonus": 85}, {"name": "動態貼布（花色7.5cm）", "bonus": 85}, {"name": "360 拇指型護腕 (左：S、M)", "bonus": 53}, {"name": "360 拇指型護腕 (右：S、M)", "bonus": 53}, {"name": "360 拇指型護腕 (左：L、XL)", "bonus": 53}, {"name": "360 拇指型護腕 (右：L、XL)", "bonus": 53}, {"name": "360 髕骨型護膝 (左右通用：S/M)", "bonus": 76}, {"name": "360 髕骨型護膝 (左右通用：L/XL)", "bonus": 76}, {"name": "360 8 字穩固護踝 (左右通用：S)", "bonus": 53}, {"name": "360 8 字穩固護踝 (左右通用：M)", "bonus": 53}, {"name": "360 8 字穩固護踝 (左右通用：L)", "bonus": 53}, {"name": "超肌感貼紮長臂套 (左右通用：S)", "bonus": 66}, {"name": "超肌感貼紮長臂套 (左右通用：M)", "bonus": 66}, {"name": "超肌感貼紮長臂套 (左右通用：L)", "bonus": 66}, {"name": "超肌感貼紮長臂套 (左右通用：XL)", "bonus": 66}, {"name": "超肌感貼紮長腿套 (左右通用：S)", "bonus": 105}, {"name": "超肌感貼紮長腿套 (左右通用：M)", "bonus": 105}, {"name": "超肌感貼紮長腿套 (左右通用：L)", "bonus": 105}, {"name": "超肌感貼紮長腿套 (左右通用：XL)", "bonus": 105}, {"name": "超肌感貼紮長腿套 (左右通用：2XL)", "bonus": 105}, {"name": "日夜拇指外翻套 (左：S)", "bonus": 71}, {"name": "日夜拇指外翻套 (右：S)", "bonus": 71}, {"name": "日夜拇指外翻套 (左：Ｌ)", "bonus": 71}, {"name": "日夜拇指外翻套 (右：Ｌ)", "bonus": 71}, {"name": "AIDER 護腕 （黑）", "bonus": 105}, {"name": "AIDER 護腕 （白）", "bonus": 105}, {"name": "AIDER 護腕 （米粉）", "bonus": 105}, {"name": "AIDER 護腕 （天空藍）", "bonus": 105}, {"name": "AIDER 護腕 （紫）", "bonus": 105}, {"name": "壓縮褲（男款） (尺寸：S)", "bonus": 193}, {"name": "壓縮褲（男款） (尺寸：M)", "bonus": 193}, {"name": "壓縮褲（男款） (尺寸：L)", "bonus": 193}, {"name": "壓縮褲（男款） (尺寸：XL)", "bonus": 193}, {"name": "壓縮褲（女款） (尺寸：S)", "bonus": 193}, {"name": "壓縮褲（女款） (尺寸：M)", "bonus": 193}, {"name": "壓縮褲（女款） (尺寸：L)", "bonus": 193}, {"name": "壓縮褲（女款） (尺寸：XL)", "bonus": 193}, {"name": "「可塑型」多功能護腰 (尺寸：S、M）", "bonus": 187}, {"name": "「可塑型」多功能護腰 (尺寸：L、XL）", "bonus": 187}, {"name": "保濕美容凝膠頸套", "bonus": 57}, {"name": "保濕美容凝膠手肘套", "bonus": 57}, {"name": "保濕美容凝膠手套", "bonus": 50}, {"name": "保濕美容凝膠足跟套", "bonus": 68}, {"name": "保濕美容凝膠足套", "bonus": 53}, {"name": "筋膜球（黃）", "bonus": 21}];
-const SEED_HOLIDAYS = [];
 
 function seed(){
   return {
@@ -328,7 +327,7 @@ function seed(){
     staff:[],
     params:{googleReview:50, otRate1:1.34, otRate2:1.67, holRate:2},
     products:SEED_PRODUCTS.map(p=>({name:p.name,bonus:Number(p.bonus)||0})),
-    holidays:SEED_HOLIDAYS.map(h=>({date:h.date,name:h.name})),
+    holidays:[],
     schedule:{year:2026, month:7, shifts:{}},
     schedules:{},
     punches:[],
@@ -544,7 +543,7 @@ function payrollFor(s){
   bs.forEach(b=>{ const c=bonusCalc(b); prodSub+=c.sub; rev+=c.rev; reviews+=(b.product==='Google 5星好評'?(Number(b.reviews)||0):0); bonusTotal+=c.total; });
   const insurance=Number(s.insurance)||0;
   const net = base+otPay+holPay-leaveDeduct+perfect+bonusTotal-insurance;
-  return {total,reg,ot,hol,base,otPay,holPay,leaveDeduct,perfect,voided,warn,prodSub,rev,reviews,bonusTotal,insurance,net};
+  return {total,reg,ot,hol,base,otPay,holPay,leaveDeduct,perfect,voided,prodSub,rev,reviews,bonusTotal,insurance,net};
 }
 
 /* ============================== NAV / ROUTER ============================== */
