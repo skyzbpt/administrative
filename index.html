@@ -325,6 +325,7 @@ function seed(){
     products:SEED_PRODUCTS.map(p=>({name:p.name,bonus:Number(p.bonus)||0})),
     holidays:SEED_HOLIDAYS.map(h=>({date:h.date,name:h.name})),
     schedule:{year:2026, month:7, shifts:{}},
+    schedules:{},
     punches:[],
     bonuses:[],
     payDate:'2026/08/05',
@@ -344,6 +345,17 @@ function migrate(db){
   }
   if(db._ver<4){ if(db.params && db.params.holRate==null) db.params.holRate=2; db._ver=4; }
   if(db._ver<5){ if(!Array.isArray(db.admins)||!db.admins.length) db.admins=[{user:'sky',pass:'000'}]; db._ver=5; }
+  if(db._ver<6){
+    if(!db.schedules||typeof db.schedules!=='object') db.schedules={};
+    // 舊版單一班表 → 歸入上次選擇的月份，避免資料遺失
+    if(db.schedule && db.schedule.shifts && Object.keys(db.schedule.shifts).length){
+      const mm=String(db.schedule.month).padStart(2,'0');
+      const k=db.schedule.year+'/'+mm;
+      db.schedules[k]=Object.assign({}, db.schedules[k]||{}, db.schedule.shifts);
+    }
+    if(db.schedule) db.schedule.shifts={};
+    db._ver=6;
+  }
   return db;
 }
 function load(){ try{const r=localStorage.getItem(KEY); if(r) return migrate(JSON.parse(r));}catch(e){} return seed(); }
@@ -451,6 +463,8 @@ const pad2=n=>String(n).padStart(2,'0');
 const fmt=n=>{ n=Math.round(Number(n)||0); return n.toLocaleString('en-US'); };
 const r1=x=>Math.round((Number(x)||0)*10)/10;
 function ymPrefix(){ return DB.schedule.year+'/'+pad2(DB.schedule.month)+'/'; }
+function ymKey(y,m){ return y+'/'+pad2(m); }
+function curShifts(){ if(!DB.schedules||typeof DB.schedules!=='object') DB.schedules={}; const k=ymKey(DB.schedule.year,DB.schedule.month); if(!DB.schedules[k]) DB.schedules[k]={}; return DB.schedules[k]; }
 function isHoliday(d){ return DB.holidays.some(h=>h.date===d); }
 function holidayName(d){ const h=DB.holidays.find(x=>x.date===d); return h?h.name:''; }
 function productBonus(name){ const p=DB.products.find(x=>x.name===name); return p?Number(p.bonus)||0:0; }
@@ -476,8 +490,9 @@ function bonusCalc(b){
   return {per,sub,perRev,rev,total:sub+rev};
 }
 function scheduleLeave(name){
+  const sh=curShifts();
   const days=new Date(DB.schedule.year,DB.schedule.month,0).getDate();
-  for(let d=1; d<=days; d++){ const v=DB.schedule.shifts[name+'__'+d]; if(v==='事假'||v==='病假') return true; }
+  for(let d=1; d<=days; d++){ const v=sh[name+'__'+d]; if(v==='事假'||v==='病假') return true; }
   return false;
 }
 function payrollFor(s){
@@ -694,46 +709,69 @@ function delBtns(bodyId, cb){ document.querySelectorAll('#'+bodyId+' [data-del]'
 function viewSchedule(){
   const y=DB.schedule.year, m=DB.schedule.month;
   const days=new Date(y,m,0).getDate();
-  const wk=['日','一','二','三','四','五','六'];
+  const SH=curShifts();
+  const wkMon=['一','二','三','四','五','六','日'];   // 週一→週日（左到右）
   const ymd=d=>y+'/'+pad2(m)+'/'+pad2(d);
+  const colOf=d=>(new Date(y,m-1,d).getDay()+6)%7;    // 一=0 … 日=6
 
-  // 每 7 天一段
+  // 依日曆週分段：每列一週，欄位固定為週一～週日
+  const weeks=[]; let cur=null;
+  for(let d=1; d<=days; d++){
+    const col=colOf(d);
+    if(cur===null || col===0){ if(cur!==null) weeks.push(cur); cur=[null,null,null,null,null,null,null]; }
+    cur[col]=d;
+  }
+  if(cur!==null) weeks.push(cur);
+
+  const blankTd='<td style="background:#f6f9fb"></td>';
+  const headRow='<th class="nm">行政人員</th>'+wkMon.map((w,i)=>'<th class="'+(i>=5?'we':'')+'">週'+w+'</th>').join('')+'<th class="tot">本週工時</th>';
+
   let blocks='';
-  for(let start=1; start<=days; start+=7){
-    const end=Math.min(start+6, days);
-    let head_='';
-    for(let d=start; d<=end; d++){ const jd=new Date(y,m-1,d).getDay(); const we=(jd===0||jd===6); const ho=isHoliday(ymd(d)); head_+='<th class="'+(ho?'ho':we?'we':'')+'" title="'+(ho?esc(holidayName(ymd(d))):'')+'">'+d+'<br><span style="font-weight:600">'+wk[jd]+'</span></th>'; }
+  weeks.forEach(week=>{
+    const real=week.filter(x=>x!=null); const first=real[0], last=real[real.length-1];
+    // 日期列
+    let dateRow='<tr class="daterow"><td class="nm">日期</td>';
+    week.forEach((d,i)=>{
+      if(d==null){ dateRow+=blankTd; return; }
+      const ho=isHoliday(ymd(d)), we=(i>=5);
+      dateRow+='<td class="'+(ho?'ho':we?'we':'')+'" style="font-weight:800;color:'+(ho?'var(--bad)':'var(--ink)')+'" title="'+(ho?esc(holidayName(ymd(d))):'')+'">'+d+'</td>';
+    });
+    dateRow+='<td class="tot"></td></tr>';
+    // 員工列
     let body='';
     DB.staff.forEach(s=>{
       let cells=''; let hrs=0;
-      for(let d=start; d<=end; d++){ const jd=new Date(y,m-1,d).getDay(); const we=(jd===0||jd===6); const ho=isHoliday(ymd(d));
-        const cur=DB.schedule.shifts[s.name+'__'+d]||'';
-        if(SHIFT_HOURS[cur]) hrs+=SHIFT_HOURS[cur];
-        cells+='<td class="day '+(ho?'ho':we?'we':'')+'"><select data-name="'+esc(s.name)+'" data-day="'+d+'">'+SHIFT_OPTS.map(o=>'<option '+(o===cur?'selected':'')+'>'+o+'</option>').join('')+'</select></td>';
-      }
+      week.forEach((d,i)=>{
+        if(d==null){ cells+=blankTd; return; }
+        const ho=isHoliday(ymd(d)), we=(i>=5);
+        const v=SH[s.name+'__'+d]||'';
+        if(SHIFT_HOURS[v]) hrs+=SHIFT_HOURS[v];
+        cells+='<td class="day '+(ho?'ho':we?'we':'')+'"><select data-name="'+esc(s.name)+'" data-day="'+d+'">'+SHIFT_OPTS.map(o=>'<option '+(o===v?'selected':'')+'>'+o+'</option>').join('')+'</select></td>';
+      });
       body+='<tr><td class="nm">'+esc(s.name)+'</td>'+cells+'<td class="tot">'+hrs+' hr</td></tr>';
     });
+    // 人力確認列
     let chk='<tr class="chk"><td class="nm">每日櫃檯人力確認</td>';
-    for(let d=start; d<=end; d++){ chk+='<td>'+staffingBadge(d)+'</td>'; }
+    week.forEach(d=>{ chk+='<td>'+(d==null?'':staffingBadge(d))+'</td>'; });
     chk+='<td class="tot"></td></tr>';
-    blocks+='<div class="weekblock"><div class="weeklabel">'+m+' 月 '+start+'–'+end+' 日</div>'+
-      '<div class="scroll"><table class="sched"><thead><tr><th class="nm">行政人員</th>'+head_+'<th class="tot">本週工時</th></tr></thead>'+
-      '<tbody>'+body+chk+'</tbody></table></div></div>';
-  }
+    blocks+='<div class="weekblock"><div class="weeklabel">'+m+' 月 '+first+'–'+last+' 日</div>'+
+      '<div class="scroll"><table class="sched"><thead><tr>'+headRow+'</tr></thead>'+
+      '<tbody>'+dateRow+body+chk+'</tbody></table></div></div>';
+  });
 
   // 本月總計（整月工時與估薪）
   let sumRows='';
   DB.staff.forEach(s=>{
     let hrs=0;
-    for(let d=1; d<=days; d++){ const v=DB.schedule.shifts[s.name+'__'+d]; if(SHIFT_HOURS[v]) hrs+=SHIFT_HOURS[v]; }
+    for(let d=1; d<=days; d++){ const v=SH[s.name+'__'+d]; if(SHIFT_HOURS[v]) hrs+=SHIFT_HOURS[v]; }
     sumRows+='<tr><td><b>'+esc(s.name)+'</b></td><td class="num tnum">'+hrs+' 小時</td><td class="num tnum">NT$ '+fmt(hrs*(Number(s.hourly)||0))+'</td></tr>';
   });
   const sumTbl = DB.staff.length ? ('<div class="weekblock"><div class="weeklabel">本月總計</div><div class="scroll"><table class="tbl"><thead><tr><th style="min-width:120px">行政人員</th><th class="num">整月總工時</th><th class="num">估算薪資</th></tr></thead><tbody>'+sumRows+'</tbody></table></div></div>') : '';
 
   V().innerHTML =
-    head('Schedule','每月排班表',y+' 年 '+m+' 月　每 7 天為一段顯示。班別：A 早午班 / B 午晚班（8h）、C 早班 / D 午班 / E 晚班（4h）。人力規則：平日需早、午、晚都有人，假日需早、午有人。國定假日自動標紅底。')+
+    head('Schedule','每月排班表',y+' 年 '+m+' 月　每個月班表各自獨立儲存（切換上方月份即看到該月）。依日曆週排列，欄位由左至右為週一至週日，月初／月底跨月處留白。班別：A 早午班 / B 午晚班（8h）、C 早班 / D 午班 / E 晚班（4h）。人力規則：平日需早、午、晚都有人，假日需早、午有人。國定假日自動標紅底。')+
     '<div class="card" id="schedCard"><div class="ch"><h3>'+y+' 年 '+m+' 月　行政櫃檯排班</h3><div class="spacer"></div>'+
-      '<span class="hint">點儲存格選擇班別</span>'+
+      '<span class="hint">點儲存格即自動儲存</span>'+
       '<button class="btn sm no-print" id="btnSchedPdf" style="margin-left:10px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>另存PDF</button></div>'+
     '<div class="cb">'+blocks+sumTbl+'</div>'+
     '<div class="cb" style="padding-top:0"><div class="legend">'+
@@ -745,14 +783,15 @@ function viewSchedule(){
     '</div></div></div>';
 
   document.querySelectorAll('.sched select').forEach(sel=>{
-    sel.onchange=()=>{ const key=sel.dataset.name+'__'+sel.dataset.day; if(sel.value) DB.schedule.shifts[key]=sel.value; else delete DB.schedule.shifts[key]; save(); keepScroll(viewSchedule); };
+    sel.onchange=()=>{ const sh=curShifts(); const key=sel.dataset.name+'__'+sel.dataset.day; if(sel.value) sh[key]=sel.value; else delete sh[key]; save(); keepScroll(viewSchedule); };
   });
   const sp=document.getElementById('btnSchedPdf'); if(sp) sp.onclick=printSchedule;
 }
 function staffingBadge(d){
   const y=DB.schedule.year,m=DB.schedule.month;
+  const sh=curShifts();
   let A=0,B=0,C=0,D=0,E=0;
-  DB.staff.forEach(s=>{ const v=DB.schedule.shifts[s.name+'__'+d]; if(v==='A')A++;else if(v==='B')B++;else if(v==='C')C++;else if(v==='D')D++;else if(v==='E')E++; });
+  DB.staff.forEach(s=>{ const v=sh[s.name+'__'+d]; if(v==='A')A++;else if(v==='B')B++;else if(v==='C')C++;else if(v==='D')D++;else if(v==='E')E++; });
   if(A+B+C+D+E===0) return '<span class="badge b-bad">❌ 休診</span>';
   const jd=new Date(y,m-1,d).getDay(); const weekend=(jd===0||jd===6);
   const morning=(A+C)>0;     // 早：A 早午 / C 早
@@ -771,8 +810,9 @@ function todayStr(){ const d=new Date(); return d.getFullYear()+'/'+pad2(d.getMo
 function nowHM(){ const d=new Date(); return pad2(d.getHours())+':'+pad2(d.getMinutes()); }
 function kioskShift(name){
   const d=new Date();
-  if(d.getFullYear()===DB.schedule.year && (d.getMonth()+1)===DB.schedule.month){
-    const v=DB.schedule.shifts[name+'__'+d.getDate()];
+  const sh=(DB.schedules||{})[ymKey(d.getFullYear(),d.getMonth()+1)];
+  if(sh){
+    const v=sh[name+'__'+d.getDate()];
     if(v && SHIFT_HOURS[v]) return v;
     if(v==='休'||v==='事假'||v==='病假') return v;
   }
