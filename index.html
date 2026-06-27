@@ -817,7 +817,25 @@ function renderGate(){
       '</div>'+
     '</div>';
   const tEl=document.getElementById('kTime');
-  window.__kioskTimer=setInterval(()=>{ const d=new Date(); if(tEl) tEl.textContent=pad2(d.getHours())+':'+pad2(d.getMinutes())+':'+pad2(d.getSeconds()); }, 1000);
+  window.__kioskDay=todayStr();
+  window.__kioskPull=Date.now();
+  window.__kioskTimer=setInterval(()=>{
+    if(isAdmin) return;
+    const d=new Date();
+    if(tEl) tEl.textContent=pad2(d.getHours())+':'+pad2(d.getMinutes())+':'+pad2(d.getSeconds());
+    // 跨日自動換新：偵測到日期變更，重拉雲端最新班表後重繪前台（昨日打卡卡片自動清空、套用今日班別與國定假日）
+    if(todayStr()!==window.__kioskDay){
+      window.__kioskDay=todayStr();
+      if(WORKER_URL){ pullFromCloud().then(()=>{ if(!isAdmin) renderGate(); }); }
+      else renderGate();
+      return;
+    }
+    // 每 5 分鐘輕量同步雲端，讓後台新增同仁／調整班別即時反映於前台
+    if(WORKER_URL && Date.now()-window.__kioskPull>300000){
+      window.__kioskPull=Date.now();
+      pullFromCloud().then(()=>{ if(!isAdmin) renderGate(); });
+    }
+  }, 1000);
   document.querySelectorAll('[data-stamp]').forEach(b=>{
     b.onclick=()=>{
       const name=b.getAttribute('data-stamp'), slot=b.getAttribute('data-slot');
