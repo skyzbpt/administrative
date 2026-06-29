@@ -119,13 +119,9 @@ select.cell-in{cursor:pointer}
 .muted{color:var(--muted)}
 .del{border:0;background:transparent;color:var(--faint);width:28px;height:28px;border-radius:8px;font-size:16px;line-height:1}
 .del:hover{background:var(--bad-bg);color:var(--bad)}
-.ord{border:1px solid var(--line);background:var(--surface);color:var(--sky-700);width:26px;height:26px;border-radius:7px;font-size:10px;line-height:1;padding:0}
-.ord:hover{background:var(--sky-50);border-color:var(--sky-100)}
-.ord:disabled{opacity:.3;cursor:default}
 
 .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.3px;white-space:nowrap}
 .b-ok{background:var(--ok-bg);color:var(--ok)} .b-warn{background:var(--warn-bg);color:var(--warn)} .b-bad{background:var(--bad-bg);color:var(--bad)}
-.b-ft{background:var(--sky-100);color:var(--sky-700)} .b-pt{background:var(--line-2);color:var(--muted)}
 
 /* ---------- KPI ---------- */
 .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
@@ -319,15 +315,16 @@ select.cell-in{cursor:pointer}
 <script>
 /* ============================== SEED ============================== */
 const SEED_PRODUCTS = [{"name": "仁術-筋膜按壓器（藍）", "bonus": 19}, {"name": "仁術-筋膜按壓器（綠）", "bonus": 19}, {"name": "仁術-筋膜球（藍）", "bonus": 19}, {"name": "仁術-筋膜球（粉）", "bonus": 19}, {"name": "艾羅力-滾筒（藍45）", "bonus": 54}, {"name": "艾羅力-滾筒（藍90）", "bonus": 94}, {"name": "小黑豹-滾筒", "bonus": 50}, {"name": "星星相挺-坐墊（黑）", "bonus": 82}, {"name": "星星相挺-坐墊（藍綠）", "bonus": 82}, {"name": "小樂浪-筋膜球（藍）", "bonus": 18}, {"name": "小樂浪-筋膜球（綠）", "bonus": 18}, {"name": "小樂浪-筋膜球（灰）", "bonus": 18}, {"name": "綠能浩克-護脊滾棒", "bonus": 50}, {"name": "星力環-肌力訓練繩", "bonus": 48}, {"name": "修臀日記-翹臀圈一組", "bonus": 72}, {"name": "RockPods", "bonus": 140}, {"name": "RockFloss", "bonus": 48}, {"name": "筋膜球（綠）", "bonus": 21}, {"name": "筋膜球（橘）", "bonus": 21}, {"name": "筋膜球（紅）", "bonus": 21}, {"name": "花生球", "bonus": 39}, {"name": "迷彩小滾筒", "bonus": 44}, {"name": "剛勁款滾筒", "bonus": 116}, {"name": "滾輪按摩棒", "bonus": 39}, {"name": "平衡訓練磚", "bonus": 116}, {"name": "肌貼（經典款）", "bonus": 42}, {"name": "反應訓練球", "bonus": 17}, {"name": "彈力帶1.5m（橘色）", "bonus": 11}, {"name": "彈力帶1.5m（綠色）", "bonus": 12}, {"name": "彈力帶1.5m（藍色）", "bonus": 13}, {"name": "彈力帶2.5m（橘色）", "bonus": 18}, {"name": "彈力帶2.5m（綠色）", "bonus": 20}, {"name": "彈力帶2.5m（藍色）", "bonus": 21}, {"name": "平衡訓練氣墊", "bonus": 97}, {"name": "保護貼", "bonus": 59}, {"name": "雷可貼布", "bonus": 92}, {"name": "五趾襪（M）曜黑灰", "bonus": 15}, {"name": "五趾襪（M）天藍灰", "bonus": 15}, {"name": "五趾襪（M）竹青灰", "bonus": 15}, {"name": "五趾襪（M）丈藍粉", "bonus": 15}, {"name": "五趾襪（L）丈藍灰", "bonus": 15}, {"name": "五趾襪（L）曜黑灰", "bonus": 15}, {"name": "五趾襪（L）松綠灰", "bonus": 15}, {"name": "五趾襪（XL）曜黑綠", "bonus": 15}, {"name": "坐墊（黑）", "bonus": 100}, {"name": "坐墊（灰）", "bonus": 100}, {"name": "坐墊（藍）", "bonus": 100}, {"name": "坐墊（紅）", "bonus": 100}, {"name": "動態貼布（膚色5cm）", "bonus": 53}, {"name": "動態貼布（花色5cm）", "bonus": 53}, {"name": "動態貼布（膚色7.5cm）", "bonus": 85}, {"name": "動態貼布（花色7.5cm）", "bonus": 85}, {"name": "360 拇指型護腕 (左：S、M)", "bonus": 53}, {"name": "360 拇指型護腕 (右：S、M)", "bonus": 53}, {"name": "360 拇指型護腕 (左：L、XL)", "bonus": 53}, {"name": "360 拇指型護腕 (右：L、XL)", "bonus": 53}, {"name": "360 髕骨型護膝 (左右通用：S/M)", "bonus": 76}, {"name": "360 髕骨型護膝 (左右通用：L/XL)", "bonus": 76}, {"name": "360 8 字穩固護踝 (左右通用：S)", "bonus": 53}, {"name": "360 8 字穩固護踝 (左右通用：M)", "bonus": 53}, {"name": "360 8 字穩固護踝 (左右通用：L)", "bonus": 53}, {"name": "超肌感貼紮長臂套 (左右通用：S)", "bonus": 66}, {"name": "超肌感貼紮長臂套 (左右通用：M)", "bonus": 66}, {"name": "超肌感貼紮長臂套 (左右通用：L)", "bonus": 66}, {"name": "超肌感貼紮長臂套 (左右通用：XL)", "bonus": 66}, {"name": "超肌感貼紮長腿套 (左右通用：S)", "bonus": 105}, {"name": "超肌感貼紮長腿套 (左右通用：M)", "bonus": 105}, {"name": "超肌感貼紮長腿套 (左右通用：L)", "bonus": 105}, {"name": "超肌感貼紮長腿套 (左右通用：XL)", "bonus": 105}, {"name": "超肌感貼紮長腿套 (左右通用：2XL)", "bonus": 105}, {"name": "日夜拇指外翻套 (左：S)", "bonus": 71}, {"name": "日夜拇指外翻套 (右：S)", "bonus": 71}, {"name": "日夜拇指外翻套 (左：Ｌ)", "bonus": 71}, {"name": "日夜拇指外翻套 (右：Ｌ)", "bonus": 71}, {"name": "AIDER 護腕 （黑）", "bonus": 105}, {"name": "AIDER 護腕 （白）", "bonus": 105}, {"name": "AIDER 護腕 （米粉）", "bonus": 105}, {"name": "AIDER 護腕 （天空藍）", "bonus": 105}, {"name": "AIDER 護腕 （紫）", "bonus": 105}, {"name": "壓縮褲（男款） (尺寸：S)", "bonus": 193}, {"name": "壓縮褲（男款） (尺寸：M)", "bonus": 193}, {"name": "壓縮褲（男款） (尺寸：L)", "bonus": 193}, {"name": "壓縮褲（男款） (尺寸：XL)", "bonus": 193}, {"name": "壓縮褲（女款） (尺寸：S)", "bonus": 193}, {"name": "壓縮褲（女款） (尺寸：M)", "bonus": 193}, {"name": "壓縮褲（女款） (尺寸：L)", "bonus": 193}, {"name": "壓縮褲（女款） (尺寸：XL)", "bonus": 193}, {"name": "「可塑型」多功能護腰 (尺寸：S、M）", "bonus": 187}, {"name": "「可塑型」多功能護腰 (尺寸：L、XL）", "bonus": 187}, {"name": "保濕美容凝膠頸套", "bonus": 57}, {"name": "保濕美容凝膠手肘套", "bonus": 57}, {"name": "保濕美容凝膠手套", "bonus": 50}, {"name": "保濕美容凝膠足跟套", "bonus": 68}, {"name": "保濕美容凝膠足套", "bonus": 53}, {"name": "筋膜球（黃）", "bonus": 21}];
+const SEED_HOLIDAYS = [];
 
 function seed(){
   return {
-    _ver:7,
+    _ver:5,
     admins:[{user:'sky',pass:'000'}],
     staff:[],
     params:{googleReview:50, otRate1:1.34, otRate2:1.67, holRate:2},
     products:SEED_PRODUCTS.map(p=>({name:p.name,bonus:Number(p.bonus)||0})),
-    holidays:[],
+    holidays:SEED_HOLIDAYS.map(h=>({date:h.date,name:h.name})),
     schedule:{year:2026, month:7, shifts:{}},
     schedules:{},
     punches:[],
@@ -351,6 +348,7 @@ function migrate(db){
   if(db._ver<5){ if(!Array.isArray(db.admins)||!db.admins.length) db.admins=[{user:'sky',pass:'000'}]; db._ver=5; }
   if(db._ver<6){
     if(!db.schedules||typeof db.schedules!=='object') db.schedules={};
+    // 舊版單一班表 → 歸入上次選擇的月份，避免資料遺失
     if(db.schedule && db.schedule.shifts && Object.keys(db.schedule.shifts).length){
       const mm=String(db.schedule.month).padStart(2,'0');
       const k=db.schedule.year+'/'+mm;
@@ -358,10 +356,6 @@ function migrate(db){
     }
     if(db.schedule) db.schedule.shifts={};
     db._ver=6;
-  }
-  if(db._ver<7){
-    if(Array.isArray(db.staff)) db.staff.forEach(s=>{ if(!s.empType) s.empType='時薪'; }); // 既有同仁預設時薪，行為不變
-    db._ver=7;
   }
   return db;
 }
@@ -405,6 +399,7 @@ async function pullFromCloud(){
       const data=await res.json();
       await keepSpin();
       if(data&&data.staff!==undefined){ DB=migrate(data); try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){} _syncStatus='ok'; updateSyncBadge(); return true; }
+      // 雲端尚無資料（首次使用）：改為把本機資料上傳，並視為成功
       _syncStatus='ok'; updateSyncBadge(); pushToCloud(); return false;
     }
     await keepSpin(); _syncStatus='error'; updateSyncBadge();
@@ -476,18 +471,6 @@ function holidayName(d){ const h=DB.holidays.find(x=>x.date===d); return h?h.nam
 function productBonus(name){ const p=DB.products.find(x=>x.name===name); return p?Number(p.bonus)||0:0; }
 function staffByName(n){ return DB.staff.find(s=>s.name===n); }
 function isPartTime(s){ return /兼職/.test(s.title)||/兼職/.test(s.name); }
-function isFullTime(s){ return s.empType==='正職'; }
-/* 正職：薪資欄＝月固定底薪，加班/假日加給以底薪÷240（30天×8時）換算時薪。時薪：薪資欄＝每小時工資 */
-function effHourly(s){ if(isFullTime(s)){ const sal=Number(s.hourly)||0; return sal>0 ? sal/240 : 0; } return Number(s.hourly)||0; }
-function moveStaff(i,dir){
-  const j=i+dir;
-  if(j<0||j>=DB.staff.length) return;
-  if(isFullTime(DB.staff[i])!==isFullTime(DB.staff[j])) return; // 正職恆在前，不可跨類型移動
-  const t=DB.staff[i]; DB.staff[i]=DB.staff[j]; DB.staff[j]=t; save();
-}
-function normStaffOrder(){
-  DB.staff = DB.staff.map((s,k)=>[s,k]).sort((a,b)=> ((isFullTime(a[0])?0:1)-(isFullTime(b[0])?0:1)) || (a[1]-b[1]) ).map(x=>x[0]);
-}
 function diffH(a,b){ if(!a||!b) return 0; const[ah,am]=a.split(':').map(Number); const[bh,bm]=b.split(':').map(Number); return ((bh*60+bm)-(ah*60+am))/60; }
 function normTime(s){
   s=String(s==null?'':s).trim(); if(!s) return '';            // 留白允許
@@ -531,8 +514,8 @@ function payrollFor(s){
   ps.forEach(p=>{ total+=punchHours(p); ot+=punchOT(p); hol+=punchHol(p); });
   total=r1(total); ot=r1(ot); hol=r1(hol);
   const reg=r1(total-ot-hol);
-  const hr=effHourly(s);
-  const base= isFullTime(s) ? Math.round(Number(s.hourly)||0) : Math.round(hr*reg);
+  const hr=Number(s.hourly)||0;
+  const base=Math.round(hr*reg);
   const otPay=Math.round(hr*(Number(DB.params.otRate1)||0)*Math.min(2,ot) + hr*(Number(DB.params.otRate2)||0)*Math.max(0,ot-2));
   const holPay=Math.round(hr*(Number(DB.params.holRate)||2)*hol);
   const leaveDeduct=0;
@@ -543,7 +526,7 @@ function payrollFor(s){
   bs.forEach(b=>{ const c=bonusCalc(b); prodSub+=c.sub; rev+=c.rev; reviews+=(b.product==='Google 5星好評'?(Number(b.reviews)||0):0); bonusTotal+=c.total; });
   const insurance=Number(s.insurance)||0;
   const net = base+otPay+holPay-leaveDeduct+perfect+bonusTotal-insurance;
-  return {total,reg,ot,hol,base,otPay,holPay,leaveDeduct,perfect,voided,prodSub,rev,reviews,bonusTotal,insurance,net};
+  return {total,reg,ot,hol,base,otPay,holPay,leaveDeduct,perfect,voided,warn,prodSub,rev,reviews,bonusTotal,insurance,net};
 }
 
 /* ============================== NAV / ROUTER ============================== */
@@ -599,13 +582,11 @@ function viewDashboard(){
       kpi('商品銷售提撥總獎金','M20 12v8H4v-8M2 7h20v5H2z','NT$ '+fmt(prodSub),'不含評論推廣獎金')+
       kpi('衝刺 Google 評論總則數','M12 2l2.9 6.3L22 9l-5 4.6 1.3 6.9L12 17l-6.3 3.5L7 13.6 2 9l7.1-.7z',fmt(reviews)+' 則','五星好評累積引導')+
     '</div>'+
-    '<div class="card"><div class="ch"><h3>同仁個別激勵表現與分析</h3><span class="hint">雇用類型／出勤工時／商品獎金／評論／實領</span></div>'+
+    '<div class="card"><div class="ch"><h3>同仁個別激勵表現與分析</h3><span class="hint">出勤工時／商品獎金／評論／實領</span></div>'+
     '<div class="cb flush scroll"><table class="tbl"><thead><tr>'+
-      '<th>員工姓名</th><th>雇用類型</th><th>職稱</th><th class="num">出勤總實際工時</th><th class="num">販售商品累積獎金</th><th class="num">引導五星評論</th><th class="num">實領薪資總額</th>'+
+      '<th>員工姓名</th><th>職稱</th><th class="num">出勤總實際工時</th><th class="num">販售商品累積獎金</th><th class="num">引導五星評論</th><th class="num">實領薪資總額</th>'+
     '</tr></thead><tbody>'+
-      rows.map(({s,p})=>'<tr><td><b>'+esc(s.name)+'</b></td>'+
-        '<td>'+(isFullTime(s)?'<span class="badge b-ft">正職</span>':'<span class="badge b-pt">時薪</span>')+'</td>'+
-        '<td class="muted">'+esc(s.title)+'</td>'+
+      rows.map(({s,p})=>'<tr><td><b>'+esc(s.name)+'</b></td><td class="muted">'+esc(s.title)+'</td>'+
         '<td class="num tnum">'+r1(p.total)+' 小時</td>'+
         '<td class="num tnum">NT$ '+fmt(p.prodSub)+'</td>'+
         '<td class="num tnum">'+p.reviews+' 則</td>'+
@@ -620,16 +601,14 @@ function kpi(lab,icon,val,sub){
 /* ============================== VIEW: PARAMS ============================== */
 let prodFilter='';
 function viewParams(){
-  normStaffOrder(); // 正職一律排在最前（穩定排序，保留同類型內手動順序）
   V().innerHTML =
     head('Control Panel','參數總控台','所有薪資、獎金與假日計算的單一資料來源。在此增刪修改，全系統即時連動。')+
     /* 區塊一 staff */
     '<div class="card"><div class="ch"><h3>區塊一 · 行政同仁基本資料</h3><div class="spacer"></div>'+saveBtnHTML('saveStaff')+'</div>'+
     '<div class="cb flush scroll"><table class="tbl"><thead><tr>'+
-      '<th style="min-width:130px">員工姓名</th><th style="min-width:110px">職務職稱</th><th style="min-width:92px">雇用類型</th><th class="num">時薪／底薪</th><th class="num">全勤獎金</th><th class="num">勞健保自付額</th><th style="width:74px;text-align:center">排序</th><th></th>'+
+      '<th style="min-width:150px">員工姓名</th><th style="min-width:140px">職務職稱</th><th class="num">約定時薪</th><th class="num">全勤獎金</th><th class="num">勞健保自付額</th><th></th>'+
     '</tr></thead><tbody id="staffBody">'+ DB.staff.map((s,i)=>staffRow(s,i)).join('') +'</tbody></table></div>'+
-    '<div class="cb"><button class="addbtn" id="addStaff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>新增同仁</button>'+
-    '<div class="note" style="margin-top:12px"><b>正職</b>：薪資欄填每月「固定底薪」（可留空＝0），加班與國定假日加給以底薪 ÷ 240（30 天 × 8 時）換算時薪計算。<b>時薪</b>：薪資欄填每小時工資，基本薪資 ＝ 時薪 × 平日工時。正職一律排在名單最前；同類型可用 ▲▼ 調整順序。</div></div></div>'+
+    '<div class="cb"><button class="addbtn" id="addStaff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>新增同仁</button></div></div>'+
 
     '<div class="pgrid">'+
     /* 區塊二 incentive params */
@@ -662,13 +641,8 @@ function viewParams(){
     '<div class="note" style="margin-top:12px">這些帳號密碼用於後台登入，會同步到雲端、所有裝置共用。密碼以明碼儲存，僅作為基本門禁，請勿沿用與其他重要服務相同的密碼。系統至少保留一位管理員。</div></div></div>';
 
   // staff events
-  bindCells('staffBody', (i,k,val)=>{
-    if(k==='name'||k==='title'||k==='empType') DB.staff[i][k]=val; else DB.staff[i][k]=(Number(val)||0);
-    if(k==='empType'){ normStaffOrder(); save(); keepScroll(viewParams); } else save();
-  });
-  document.getElementById('addStaff').onclick=()=>{ DB.staff.push({name:'新同仁',title:'櫃檯行政',empType:'正職',hourly:0,perfect:0,insurance:0}); normStaffOrder(); save(); keepScroll(viewParams); };
-  document.querySelectorAll('#staffBody [data-up]').forEach(b=>b.onclick=()=>{ moveStaff(+b.dataset.up,-1); keepScroll(viewParams); });
-  document.querySelectorAll('#staffBody [data-down]').forEach(b=>b.onclick=()=>{ moveStaff(+b.dataset.down,1); keepScroll(viewParams); });
+  bindCells('staffBody', (i,k,val)=>{ DB.staff[i][k] = (k==='name'||k==='title')?val:(Number(val)||0); save(); });
+  document.getElementById('addStaff').onclick=()=>{ DB.staff.push({name:'新同仁',title:'櫃檯行政',hourly:185,perfect:0,insurance:0}); save(); keepScroll(viewParams); };
   delBtns('staffBody', i=>{ const nm=DB.staff[i]?DB.staff[i].name:'此同仁'; confirmModal('刪除同仁','確定要刪除「<b>'+esc(nm)+'</b>」嗎？刪除後此同仁的薪資將不再計算（已建立的打卡與獎金紀錄不會自動移除）。此動作無法復原。','確定刪除',()=>{ DB.staff.splice(i,1); save(); keepScroll(viewParams); }); });
   // params
   document.getElementById('pGoogle').onchange=e=>{ DB.params.googleReview=Number(e.target.value)||0; save(); };
@@ -699,32 +673,22 @@ function saveBtnHTML(id){ return '<button class="btn sm savebtn" id="'+id+'"><sv
 function wireSave(btnId){
   const b=document.getElementById(btnId); if(!b) return;
   b.onclick=()=>{
+    // ensure the focused field commits before saving
     if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
     save();
-    pushToCloud(true);
+    pushToCloud(true); // 點儲存即立即上傳雲端（不等待防抖）
     const html=b.innerHTML; b.classList.add('saved');
     b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>已儲存';
     setTimeout(()=>{ b.classList.remove('saved'); b.innerHTML=html; }, 1400);
   };
 }
-function staffRow(s,i){
-  const ft=isFullTime(s);
-  const last=DB.staff.length-1;
-  const canUp = i>0 && isFullTime(DB.staff[i-1])===ft;
-  const canDown = i<last && isFullTime(DB.staff[i+1])===ft;
-  return '<tr data-i="'+i+'">'+
+function staffRow(s,i){ return '<tr data-i="'+i+'">'+
   '<td><input class="cell-in" data-k="name" value="'+esc(s.name)+'"></td>'+
   '<td><input class="cell-in" data-k="title" value="'+esc(s.title)+'"></td>'+
-  '<td><select class="cell-in" data-k="empType">'+['正職','時薪'].map(o=>'<option '+((s.empType||'時薪')===o?'selected':'')+'>'+o+'</option>').join('')+'</select></td>'+
-  '<td class="num"><input class="cell-in" data-k="hourly" type="number" value="'+(s.hourly?s.hourly:'')+'" placeholder="'+(ft?'月底薪':'時薪')+'" style="text-align:right"></td>'+
-  '<td class="num"><input class="cell-in" data-k="perfect" type="number" value="'+(s.perfect?s.perfect:'')+'" placeholder="0" style="text-align:right"></td>'+
-  '<td class="num"><input class="cell-in" data-k="insurance" type="number" value="'+(s.insurance?s.insurance:'')+'" placeholder="0" style="text-align:right"></td>'+
-  '<td><div style="display:flex;gap:4px;justify-content:center">'+
-     '<button class="ord" data-up="'+i+'" '+(canUp?'':'disabled')+' title="上移">▲</button>'+
-     '<button class="ord" data-down="'+i+'" '+(canDown?'':'disabled')+' title="下移">▼</button>'+
-   '</div></td>'+
-  '<td><button class="del" data-del="'+i+'">&times;</button></td></tr>';
-}
+  '<td class="num"><input class="cell-in" data-k="hourly" type="number" value="'+s.hourly+'" style="text-align:right"></td>'+
+  '<td class="num"><input class="cell-in" data-k="perfect" type="number" value="'+s.perfect+'" style="text-align:right"></td>'+
+  '<td class="num"><input class="cell-in" data-k="insurance" type="number" value="'+s.insurance+'" style="text-align:right"></td>'+
+  '<td><button class="del" data-del="'+i+'">&times;</button></td></tr>'; }
 function holRow(h,i){ return '<tr data-i="'+i+'">'+
   '<td><input type="date" class="cell-in" data-k="date" value="'+esc((h.date||'').replace(/\//g,'-'))+'"></td>'+
   '<td><input class="cell-in" data-k="name" value="'+esc(h.name)+'"></td>'+
@@ -813,8 +777,7 @@ function viewSchedule(){
   DB.staff.forEach(s=>{
     let hrs=0;
     for(let d=1; d<=days; d++){ const v=SH[s.name+'__'+d]; if(SHIFT_HOURS[v]) hrs+=SHIFT_HOURS[v]; }
-    const est = isFullTime(s) ? (Number(s.hourly)||0) : hrs*(Number(s.hourly)||0);
-    sumRows+='<tr><td><b>'+esc(s.name)+'</b>'+(isFullTime(s)?' <span class="badge b-ft">正職</span>':'')+'</td><td class="num tnum">'+hrs+' 小時</td><td class="num tnum">NT$ '+fmt(est)+(isFullTime(s)?'（固定底薪）':'')+'</td></tr>';
+    sumRows+='<tr><td><b>'+esc(s.name)+'</b></td><td class="num tnum">'+hrs+' 小時</td><td class="num tnum">NT$ '+fmt(hrs*(Number(s.hourly)||0))+'</td></tr>';
   });
   const sumTbl = DB.staff.length ? ('<div class="weekblock"><div class="weeklabel">本月總計</div><div class="scroll"><table class="tbl"><thead><tr><th style="min-width:120px">行政人員</th><th class="num">整月總工時</th><th class="num">估算薪資</th></tr></thead><tbody>'+sumRows+'</tbody></table></div></div>') : '';
 
@@ -844,13 +807,13 @@ function staffingBadge(d){
   DB.staff.forEach(s=>{ const v=sh[s.name+'__'+d]; if(v==='A')A++;else if(v==='B')B++;else if(v==='C')C++;else if(v==='D')D++;else if(v==='E')E++; });
   if(A+B+C+D+E===0) return '<span class="badge b-bad">❌ 休診</span>';
   const jd=new Date(y,m-1,d).getDay(); const weekend=(jd===0||jd===6);
-  const morning=(A+C)>0;
-  const noon=(A+B+D)>0;
-  const evening=(B+E)>0;
+  const morning=(A+C)>0;     // 早：A 早午 / C 早
+  const noon=(A+B+D)>0;      // 午：A 早午 / B 午晚 / D 午
+  const evening=(B+E)>0;     // 晚：B 午晚 / E 晚
   const miss=[];
   if(!morning) miss.push('早');
   if(!noon) miss.push('午');
-  if(!weekend && !evening) miss.push('晚');
+  if(!weekend && !evening) miss.push('晚');   // 晚班僅平日要求
   if(miss.length===0) return '<span class="badge b-ok">✓ '+(weekend?'週末OK':'平日OK')+'</span>';
   return '<span class="badge b-warn">⚠️ 缺'+miss.join('')+'</span>';
 }
@@ -870,12 +833,19 @@ function kioskShift(name){
 }
 function findTodayPunch(name){ const ds=todayStr(); return DB.punches.find(p=>p.staff===name && p.date===ds); }
 const KSLOTS=[['in1','上午上班'],['out1','上午下班'],['in2','下午上班'],['out2','下午下班']];
+function shiftLabel(sh){ return ({A:'A 早午班',B:'B 午晚班',C:'C 早班',D:'D 午班',E:'E 晚班','休':'休假','事假':'事假','病假':'病假'})[sh]||sh; }
+function kioskSlots(sh){
+  if(sh==='A'||sh==='B') return [['in1','上午上班'],['out1','上午下班'],['in2','下午上班'],['out2','下午下班']]; // 8h 全日雙段
+  return [['in1','上班'],['out1','下班']]; // C/D/E 半日單段；休假亦單段（如需上班仍可打卡）
+}
 function kioskCards(){
   return DB.staff.map(s=>{
     const p=findTodayPunch(s.name);
     const sh=p?p.shift:kioskShift(s.name);
-    const next=KSLOTS.find(([k])=>!(p&&p[k]));
-    const slots=KSLOTS.map(([k,lab])=>{
+    const SLOTS=kioskSlots(sh);
+    const rest=(sh==='休'||sh==='事假'||sh==='病假');
+    const next=SLOTS.find(([k])=>!(p&&p[k]));
+    const slots=SLOTS.map(([k,lab])=>{
       const val=p&&p[k]?p[k]:'';
       return '<div class="kslot'+(val?' done':'')+'"><div class="l">'+lab+'</div><div class="t">'+(val||'—')+'</div></div>';
     }).join('');
@@ -883,7 +853,7 @@ function kioskCards(){
       ? '<button class="kbtn" data-stamp="'+esc(s.name)+'" data-slot="'+next[0]+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/></svg>'+next[1]+'打卡</button>'
       : '<button class="kbtn" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/></svg>今日打卡完成</button>';
     return '<div class="kcard"><div class="kh"><div class="kname">'+esc(s.name)+'</div>'+
-      '<div class="kshift">今日班別 '+esc(sh)+'</div></div>'+
+      '<div class="kshift">今日班別 '+esc(shiftLabel(sh))+(rest?'（排休）':'')+'</div></div>'+
       '<div class="kslots">'+slots+'</div>'+btn+'</div>';
   }).join('') || '<div class="empty card">尚無同仁資料，請於後台「參數總控台」新增。</div>';
 }
@@ -973,10 +943,10 @@ function viewPunch(){
       '<td><input type="date" class="cell-in" data-k="date" value="'+esc((p.date||'').replace(/\//g,'-'))+'" style="width:150px">'+(ho?'<div style="margin-top:3px"><span class="badge b-bad">'+esc(holidayName(p.date))+'</span></div>':'')+'</td>'+
       '<td><select class="cell-in" data-k="staff" style="min-width:120px">'+staffSelect(p.staff)+'</select></td>'+
       '<td><select class="cell-in" data-k="shift" style="width:80px">'+SHIFT_OPTS.map(o=>'<option '+(o===p.shift?'selected':'')+'>'+o+'</option>').join('')+'</select></td>'+
-      '<td><input class="cell-in" data-k="in1" value="'+esc(p.in1)+'" placeholder="--:--" inputmode="numeric" maxlength="5" style="width:90px;text-align:center"></td>'+
-      '<td><input class="cell-in" data-k="out1" value="'+esc(p.out1)+'" placeholder="--:--" inputmode="numeric" maxlength="5" style="width:90px;text-align:center"></td>'+
-      '<td><input class="cell-in" data-k="in2" value="'+esc(p.in2)+'" placeholder="--:--" inputmode="numeric" maxlength="5" style="width:90px;text-align:center"></td>'+
-      '<td><input class="cell-in" data-k="out2" value="'+esc(p.out2)+'" placeholder="--:--" inputmode="numeric" maxlength="5" style="width:90px;text-align:center"></td>'+
+      '<td><input class="cell-in" data-k="in1" type="time" value="'+esc(p.in1)+'" style="width:124px"></td>'+
+      '<td><input class="cell-in" data-k="out1" type="time" value="'+esc(p.out1)+'" style="width:124px"></td>'+
+      '<td><input class="cell-in" data-k="in2" type="time" value="'+esc(p.in2)+'" style="width:124px"></td>'+
+      '<td><input class="cell-in" data-k="out2" type="time" value="'+esc(p.out2)+'" style="width:124px"></td>'+
       '<td><select class="cell-in" data-k="manual" title="留白（自動）＝以打卡時間計算" style="width:104px">'+manualOpts(p.manual)+'</select></td>'+
       '<td'+(['遲到','早退','遲到+早退'].includes(p.status)?' style="background:var(--bad-bg)"':'')+'><select class="cell-in" data-k="status" style="width:108px'+(['遲到','早退','遲到+早退'].includes(p.status)?';color:var(--bad);font-weight:800':'')+'">'+['正常','遲到','早退','遲到+早退','缺勤異常'].map(o=>'<option '+(o===p.status?'selected':'')+'>'+o+'</option>').join('')+'</select></td>'+
       '<td class="num ro tnum" style="vertical-align:middle">'+h+'</td>'+
@@ -985,7 +955,7 @@ function viewPunch(){
       '<td><button class="del" data-del="'+i+'">&times;</button></td></tr>';
   }).join('') || '<tr><td colspan="13" class="empty">尚無打卡紀錄，點下方按鈕新增。</td></tr>';
 
-  // 本月遲到／早退／遲到+早退／缺勤異常統計（依結算月份）
+  // 本月遲到／早退／遲到+早退統計（依結算月份）
   const _stat={};
   DB.punches.filter(p=>(p.date||'').startsWith(ymPrefix())).forEach(p=>{
     if(!['遲到','早退','遲到+早退','缺勤異常'].includes(p.status)) return;
@@ -1015,7 +985,7 @@ function viewPunch(){
   V().innerHTML =
     head('Time Clock','每日打卡紀錄表','輸入四段打卡時間自動算工時；或於「主管覆核」欄直接填入時數覆蓋。遲到／早退／遲到+早退會標紅底警示，並於上方統計各員本月次數。國定假日工時自動歸入假日加倍計算。')+
     (!DB.staff.length?'<div class="note" style="background:var(--warn-bg);border-color:#f3d8a6;color:var(--warn)"><b>⚠️ 尚未建立任何行政同仁，因此員工欄無法顯示姓名。</b>　請先到左側「參數總控台 → 區塊一 · 行政同仁基本資料」按「新增同仁」，姓名就會出現在打卡、排班、獎金與薪資各表。</div>':'')+
-    '<div class="note">時間欄位可<b>留白</b>（例如只上半天，就只填上午兩格、其餘留空）。輸入支援「830」「8:30」等寫法，離開欄位會自動整理成 08:30；要清空直接刪掉文字即可。「最終工時」優先採用主管覆核欄位的數字；選「—（自動）」時才以打卡時間自動計算。<b>覆核欄為下拉選單，0.5～12 小時、每 0.5 小時一級</b>。當日若為國定假日，全部工時計入<b>國定假日工時</b>（不另計平日加班）。</div>'+
+    '<div class="note">上下班時間欄位可<b>直接點選時間</b>（點一下跳出時間選擇器，也可用鍵盤輸入），需要時也可<b>留白</b>（例如只上半天，就只填上午兩格、其餘留空）。「最終工時」優先採用主管覆核欄位的數字；選「—（自動）」時才以打卡時間自動計算。<b>覆核欄為下拉選單，0.5～12 小時、每 0.5 小時一級</b>。當日若為國定假日，全部工時計入<b>國定假日工時</b>（不另計平日加班）。</div>'+
     statsCard+
     '<div class="card"><div class="ch"><h3>打卡明細</h3><div class="spacer"></div><span class="hint">僅顯示 '+DB.schedule.year+'/'+pad2(DB.schedule.month)+' 之外亦可記錄；薪資結算只計當月</span>'+saveBtnHTML('savePunch')+'</div>'+
     '<div class="cb flush scroll"><table class="tbl"><thead><tr>'+
@@ -1303,6 +1273,299 @@ function boot(){
   if(isAdmin){ gate.style.display='none'; app.style.display='flex'; render(); }
   else{
     app.style.display='none'; gate.style.display='block';
+    if(WORKER_URL){ pullFromCloud().then(()=>renderGate()); } else renderGate();
+  }
+}
+function openLogin(){
+  openOv(
+    '<button class="x" id="ovClose">&times;</button>'+
+    '<h3>後台登入</h3>'+
+    '<p>請輸入管理者帳號密碼以進入後台管理功能。前台打卡無需登入。</p>'+
+    '<div class="login">'+
+      '<div class="fld"><label>帳號</label><input id="luser" autocomplete="off" placeholder="帳號"></div>'+
+      '<div class="fld"><label>密碼</label><input id="lpass" type="password" autocomplete="off" placeholder="密碼"></div>'+
+      '<div class="err" id="lerr"></div>'+
+    '</div>'+
+    '<div class="row"><button class="btn primary" id="lgo" style="flex:1;justify-content:center">登入</button></div>'
+  );
+  document.getElementById('ovClose').onclick=closeOv;
+  const u=document.getElementById('luser'), p=document.getElementById('lpass'), err=document.getElementById('lerr');
+  const tryLogin=()=>{
+    if(checkAdmin(u.value.trim(),p.value)){ isAdmin=true; closeOv(); current='dashboard'; boot(); }
+    else { err.textContent='帳號或密碼錯誤'; p.value=''; p.focus(); }
+  };
+  document.getElementById('lgo').onclick=tryLogin;
+  p.addEventListener('keydown',e=>{ if(e.key==='Enter') tryLogin(); });
+  u.addEventListener('keydown',e=>{ if(e.key==='Enter') p.focus(); });
+  setTimeout(()=>u.focus(),50);
+}
+document.getElementById('btnLogout').onclick=()=>{ isAdmin=false; boot(); };
+
+/* ============================== INIT ============================== */
+loadCloudConfig();
+updateSyncBadge();
+boot();
+</script>
+</body>
+</html>staff)+'</select></td>'+
+      '<td><select class="cell-in" data-k="product" style="min-width:200px">'+prodOpts(b.product)+'</select></td>'+
+      '<td class="num" style="vertical-align:middle">'+(b.product==='Google 5星好評'?'<span class="muted">—</span>':'<input class="cell-in" data-k="qty" type="number" min="0" value="'+(b.qty||0)+'" style="width:62px;text-align:right">')+'</td>'+
+      '<td class="num" style="vertical-align:middle">'+(b.product==='Google 5星好評'?'<input class="cell-in" data-k="reviews" type="number" min="0" value="'+(b.reviews||0)+'" style="width:62px;text-align:right">':'<span class="muted">—</span>')+'</td>'+
+      '<td class="num tnum muted" style="vertical-align:middle">'+fmt(c.per)+'</td>'+
+      '<td class="num tnum" style="vertical-align:middle">'+fmt(c.sub)+'</td>'+
+      '<td class="num tnum" style="vertical-align:middle">'+fmt(c.rev)+'</td>'+
+      '<td class="num ro tnum" style="vertical-align:middle">'+fmt(c.total)+'</td>'+
+      '<td><button class="del" data-del="'+i+'">&times;</button></td></tr>';
+  }).join('') || '<tr><td colspan="10" class="empty">尚無獎金紀錄，點下方按鈕新增。</td></tr>';
+
+  V().innerHTML =
+    head('Incentives','商品與評論獎金明細','記錄同仁商品販售與 Google 五星好評推廣。每件獎勵金自動由「參數總控台」商品庫帶入。')+
+    '<div class="note">「每件獎勵金」會用商品名稱到參數庫查表 — 你在參數總控台改價或新增商品，這裡<b>自動更新</b>，不需手動填。選「Google 5星好評」則改以右側評論則數計獎。</div>'+
+    '<div class="card"><div class="ch"><h3>獎金明細</h3><div class="spacer"></div>'+saveBtnHTML('saveBonus')+'</div>'+
+    '<div class="cb flush scroll"><table class="tbl"><thead><tr>'+
+      '<th>明細日期</th><th>員工</th><th>販售商品 / 推廣項目</th><th class="num">數量</th><th class="num">好評則數</th><th class="num">每件獎勵</th><th class="num">項目小計</th><th class="num">評論獎金</th><th class="num">當日總計</th><th></th>'+
+    '</tr></thead><tbody id="bonusBody">'+rows+'</tbody></table></div>'+
+    '<div class="cb"><button class="addbtn" id="addBonus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>新增獎金紀錄</button></div></div>';
+
+  bindCells('bonusBody',(i,k,val)=>{ DB.bonuses[i][k]=(k==='qty'||k==='reviews')?(Number(val)||0):(k==='date'?String(val).trim().replace(/-/g,'/'):val); save(); keepScroll(viewBonus); });
+  delBtns('bonusBody', i=>{ DB.bonuses.splice(i,1); save(); keepScroll(viewBonus); });
+  document.getElementById('addBonus').onclick=()=>{ DB.bonuses.push({id:id(),date:DB.schedule.year+'/'+pad2(DB.schedule.month)+'/01',staff:DB.staff[0]?DB.staff[0].name:'',product:'Google 5星好評',qty:0,reviews:0}); save(); keepScroll(viewBonus); };
+  wireSave('saveBonus');
+}
+
+/* ============================== VIEW: PAYROLL ============================== */
+function viewPayroll(){
+  const rows=DB.staff.map(s=>({s,p:payrollFor(s)}));
+  const T=rows.reduce((a,{p})=>{ a.reg+=p.reg;a.ot+=p.ot;a.hol+=p.hol;a.base+=p.base;a.otPay+=p.otPay;a.holPay+=p.holPay;a.perfect+=p.perfect;a.bonusTotal+=p.bonusTotal;a.insurance+=p.insurance;a.net+=p.net; return a; },
+    {reg:0,ot:0,hol:0,base:0,otPay:0,holPay:0,perfect:0,bonusTotal:0,insurance:0,net:0});
+
+  V().innerHTML =
+    head('Payroll','月度薪資與獎金結算表',DB.schedule.year+' 年 '+DB.schedule.month+' 月　自打卡、排班與獎金紀錄自動核算。實領 = 基本＋加班＋假日加倍－扣款＋全勤＋獎金－勞健保。')+
+    '<div class="note">全勤獎金於下列任一情況歸零：<b>兼職同仁</b>、當月排班含<b>事假／病假</b>、或打卡考勤狀態非「正常」。目前「假別扣款」欄位保留為 0，可日後加入請假扣薪規則。</div>'+
+    '<div class="card"><div class="ch"><h3>核算總表</h3></div>'+
+    '<div class="cb flush scroll"><table class="tbl"><thead><tr>'+
+      '<th>員工</th><th>職稱</th><th class="num">時薪</th><th class="num">平日工時</th><th class="num">加班</th><th class="num">假日工時</th>'+
+      '<th class="num">基本薪資</th><th class="num">加班費</th><th class="num">假日加倍</th><th class="num">扣款</th><th class="num">全勤</th><th class="num">商品評論獎金</th><th class="num">勞健保</th><th class="num">實領總額</th>'+
+    '</tr></thead><tbody>'+
+      rows.map(({s,p})=>'<tr>'+
+        '<td style="white-space:nowrap"><b>'+esc(s.name)+'</b></td><td class="muted">'+esc(s.title)+'</td>'+
+        '<td class="num tnum">'+fmt(s.hourly)+'</td>'+
+        '<td class="num tnum">'+r1(p.reg)+'</td>'+
+        '<td class="num tnum">'+r1(p.ot)+'</td>'+
+        '<td class="num tnum">'+r1(p.hol)+'</td>'+
+        '<td class="num tnum">'+fmt(p.base)+'</td>'+
+        '<td class="num tnum">'+fmt(p.otPay)+'</td>'+
+        '<td class="num tnum">'+fmt(p.holPay)+'</td>'+
+        '<td class="num tnum muted">'+fmt(p.leaveDeduct)+'</td>'+
+        '<td class="num tnum">'+(p.perfect?fmt(p.perfect):'<span class="muted">0</span>')+'</td>'+
+        '<td class="num tnum">'+fmt(p.bonusTotal)+'</td>'+
+        '<td class="num tnum">'+fmt(p.insurance)+'</td>'+
+        '<td class="num tnum ro">NT$ '+fmt(p.net)+'</td></tr>').join('')+
+    '</tbody><tbody class="total"><tr>'+
+        '<td>總計</td><td></td><td class="num tnum">'+fmt(rows.reduce((a,{s})=>a+(Number(s.hourly)||0),0))+'</td>'+
+        '<td class="num tnum">'+r1(T.reg)+'</td><td class="num tnum">'+r1(T.ot)+'</td><td class="num tnum">'+r1(T.hol)+'</td>'+
+        '<td class="num tnum">'+fmt(T.base)+'</td><td class="num tnum">'+fmt(T.otPay)+'</td><td class="num tnum">'+fmt(T.holPay)+'</td>'+
+        '<td class="num tnum">0</td><td class="num tnum">'+fmt(T.perfect)+'</td><td class="num tnum">'+fmt(T.bonusTotal)+'</td>'+
+        '<td class="num tnum">'+fmt(T.insurance)+'</td><td class="num tnum">NT$ '+fmt(T.net)+'</td></tr>'+
+    '</tbody></table></div></div>';
+}
+
+/* ============================== VIEW: PAYSLIP ============================== */
+function defaultPayDate(){ let y=DB.schedule.year, m=DB.schedule.month+1; if(m>12){ m=1; y++; } return y+'/'+pad2(m)+'/10'; }
+let slipStaff=null;
+function viewPayslip(){
+  if(!slipStaff || !staffByName(slipStaff)) slipStaff = DB.staff[0] ? DB.staff[0].name : null;
+  const _ym = DB.schedule.year+'/'+pad2(DB.schedule.month);
+  if(DB.payDateFor !== _ym){ DB.payDate = defaultPayDate(); DB.payDateFor = _ym; }
+  const ctrl =
+    head('Pay Slip','電子薪資明細單',DB.schedule.year+' 年 '+DB.schedule.month+' 月份薪資明細，點「另存PDF」開啟列印視窗，於目的地選「另存為 PDF」即可。')+
+    '<div class="card no-print"><div class="cb">'+
+      '<div class="miniform" style="margin-bottom:12px">'+
+        '<div class="fld"><label>請選擇員工</label><select id="slipSel" class="cell-in" style="min-width:180px">'+staffOpts(slipStaff)+'</select></div>'+
+        '<div class="fld"><label>發放日期</label><input id="slipDate" type="date" class="cell-in" value="'+esc((DB.payDate||'').replace(/\//g,'-'))+'" style="min-width:150px"></div>'+
+      '</div>'+
+      '<button class="btn primary no-print" id="btnPrint" style="width:100%;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>另存PDF</button>'+
+    '</div></div>';
+
+  const s=staffByName(slipStaff);
+  let slip='<div class="empty card">尚無同仁資料</div>';
+  if(s){
+    const p=payrollFor(s);
+    slip='<div class="slip"><div class="sh">'+
+      '<div><div class="l1">領航物理治療所　薪資明細</div><div class="l2">'+esc(s.name)+'</div></div>'+
+      '<div class="r">'+esc(s.title)+'<br>'+DB.schedule.year+' 年 '+DB.schedule.month+' 月份</div></div>'+
+      '<div class="sb">'+
+      '<div class="meta">'+
+        '<div><b>約定時薪</b>NT$ '+fmt(s.hourly)+' / 小時</div>'+
+        '<div><b>發放日期</b>'+esc(DB.payDate)+'</div>'+
+        '<div><b>出勤工時</b>平日 '+r1(p.reg)+' / 加班 '+r1(p.ot)+' / 假日 '+r1(p.hol)+' 小時</div>'+
+        '<div><b>全勤狀態</b>'+(p.voided?'<span class="badge b-warn">未達全勤</span>':'<span class="badge b-ok">符合全勤</span>')+'</div>'+
+      '</div>'+
+      '<div class="two">'+
+        '<div class="col pos"><h4>應給薪資項目 (+)</h4>'+
+          li('基本薪資',p.base)+li('勞基法超時加班費',p.otPay)+li('國定假日出勤加給',p.holPay)+li('商品與評論推廣獎金',p.bonusTotal)+li('考核全勤優異獎金',p.perfect)+
+        '</div>'+
+        '<div class="col neg"><h4>扣款與假別扣項 (−)</h4>'+
+          li('事假／病假缺勤扣款',p.leaveDeduct)+li('勞健保自付額扣款',p.insurance)+
+        '</div>'+
+      '</div>'+
+      '<div class="net"><div class="lab">本月實際發放總額 (Net Pay)</div><div class="v">NT$ '+fmt(p.net)+'</div></div>'+
+      '<div class="sign">'+
+        '<div>診所核章：（領航物理治療所）<div class="ln"></div></div>'+
+        '<div>同仁簽名確認：<div class="ln"></div></div>'+
+      '</div>'+
+    '</div></div>';
+  }
+  V().innerHTML = ctrl + slip;
+  const sel=document.getElementById('slipSel'); if(sel) sel.onchange=e=>{ slipStaff=e.target.value; keepScroll(viewPayslip); };
+  const sd=document.getElementById('slipDate'); if(sd) sd.onchange=e=>{ DB.payDate=(e.target.value||'').replace(/-/g,'/'); save(); keepScroll(viewPayslip); };
+  const pr=document.getElementById('btnPrint'); if(pr) pr.onclick=printSlip;
+}
+function li(lab,val){ return '<div class="li"><span>'+lab+'</span><span>NT$ '+fmt(val)+'</span></div>'; }
+const SLIP_PRINT_CSS = `
+:root{ --ink:#0e2433; --muted:#5d758a; --faint:#9cb2c3; --line:#e4eef4; --line-2:#eef5f9;
+ --sky:#0ea5e9; --sky-700:#036aa1; --sky-50:#eef8fe; --sky-100:#dcf1fd;
+ --ok:#15a34a; --ok-bg:#e9f8ef; --warn:#c97a06; --warn-bg:#fdf2e1; --bad:#d6342c; --bad-bg:#fdecea; }
+*{ box-sizing:border-box; -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important }
+html,body{ margin:0; padding:0; background:#fff; color:var(--ink);
+ font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif; }
+.slip{ max-width:640px; margin:0 auto; background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden }
+.slip .sh{ background:linear-gradient(150deg,var(--sky),var(--sky-700)); color:#fff; padding:20px 24px; display:flex; align-items:center; justify-content:space-between }
+.slip .sh .l1{ font-size:12px; letter-spacing:2px; font-weight:700; opacity:.85 }
+.slip .sh .l2{ font-size:18px; font-weight:800; margin-top:3px }
+.slip .sh .r{ text-align:right; font-size:12px; opacity:.92 }
+.slip .sb{ padding:22px 24px }
+.slip .meta{ display:grid; grid-template-columns:1fr 1fr; gap:10px 24px; padding-bottom:16px; border-bottom:1px dashed var(--line); margin-bottom:16px }
+.slip .meta div{ font-size:13px } .slip .meta b{ color:var(--faint); font-weight:700; font-size:11.5px; letter-spacing:.5px; display:block; margin-bottom:2px }
+.slip .two{ display:grid; grid-template-columns:1fr 1fr; gap:26px }
+.slip .col h4{ margin:0 0 9px; font-size:12px; font-weight:800; letter-spacing:.5px; padding-bottom:7px; border-bottom:2px solid var(--line-2) }
+.slip .col.pos h4{ color:var(--ok) } .slip .col.neg h4{ color:var(--bad) }
+.slip .li{ display:flex; justify-content:space-between; padding:6px 0; font-size:13px; border-bottom:1px solid var(--line-2) }
+.slip .li span:last-child{ font-weight:700; font-variant-numeric:tabular-nums }
+.slip .net{ margin-top:18px; background:var(--sky-50); border:1px solid var(--sky-100); border-radius:11px; padding:14px 18px; display:flex; align-items:center; justify-content:space-between }
+.slip .net .lab{ font-size:13px; font-weight:800; color:var(--sky-700); letter-spacing:.5px }
+.slip .net .v{ font-size:26px; font-weight:800; color:var(--sky-700); font-variant-numeric:tabular-nums }
+.slip .sign{ margin-top:20px; padding-top:16px; border-top:1px dashed var(--line); display:grid; grid-template-columns:1fr 1fr; gap:12px 24px; font-size:12.5px; color:var(--muted) }
+.slip .sign .ln{ margin-top:14px; border-bottom:1px solid var(--ink); height:1px }
+.badge{ display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:999px; font-size:11.5px; font-weight:800; letter-spacing:.3px; white-space:nowrap }
+.b-ok{ background:var(--ok-bg); color:var(--ok) } .b-warn{ background:var(--warn-bg); color:var(--warn) } .b-bad{ background:var(--bad-bg); color:var(--bad) }
+@page{ margin:14mm }
+@media print{ .slip{ border:none; border-radius:0; max-width:none } }
+`;
+/* iOS/iPadOS Safari 無法從隱藏 iframe 列印（且 iPad 會偽裝成 Mac），改開新分頁；桌機維持隱藏 iframe */
+function isIOS(){
+  return /iP(hone|ad|od)/.test(navigator.platform)
+    || (/Mac/.test(navigator.platform) && navigator.maxTouchPoints>1)
+    || /iPhone|iPad|iPod/.test(navigator.userAgent);
+}
+function openPrint(docHtml){
+  if(isIOS()){
+    const hint='<div class="noprint-hint" style="position:fixed;left:0;right:0;bottom:0;padding:11px 14px;background:#0284c7;color:#fff;font-size:13px;line-height:1.5;text-align:center;z-index:99999">若未自動跳出列印，請點 Safari「分享」鈕 →「列印」，在預覽畫面用雙指向外放大後，即可用分享鈕儲存 PDF</div>'
+      +'<style>@media print{.noprint-hint{display:none!important}}</style>'
+      +'<script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},700);<\/script>';
+    const out=docHtml.replace('</body>', hint+'</body>');
+    const w=window.open('','_blank');
+    if(!w){ alert('瀏覽器擋住了新分頁，請允許彈出視窗後再按一次。'); return; }
+    w.document.open(); w.document.write(out); w.document.close();
+    return;
+  }
+  const ifr=document.createElement('iframe'); ifr.setAttribute('aria-hidden','true');
+  ifr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0';
+  document.body.appendChild(ifr);
+  const w=ifr.contentWindow, d=w.document; d.open(); d.write(docHtml); d.close();
+  const go=()=>{ try{w.focus();w.print();}catch(e){window.print();}
+    setTimeout(()=>{if(ifr.parentNode)ifr.parentNode.removeChild(ifr);},900); };
+  if(d.fonts&&d.fonts.ready){d.fonts.ready.then(()=>setTimeout(go,200));}else setTimeout(go,420);
+}
+/* 薪資明細 PDF：只印個人薪資明細單（直向 A4）*/
+function printSlip(){
+  const s=staffByName(slipStaff); if(!s) return;
+  const slipEl=document.querySelector('#view .slip');
+  if(!slipEl){ alert('找不到薪資明細，請先選擇員工。'); return; }
+  const y=DB.schedule.year, m=DB.schedule.month;
+  const html='<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><title>薪資明細_'+y+pad2(m)+'_'+esc(s.name)+'</title>'
+    +'<style>'+SLIP_PRINT_CSS+'@page{size:A4 portrait;margin:14mm}</style></head><body>'
+    +slipEl.outerHTML
+    +'</body></html>';
+  openPrint(html);
+}
+/* Print the monthly schedule in a clean landscape window (Save as PDF from the print
+   dialog). Avoids external libraries and blob downloads, which some webviews block. */
+function printSchedule(){
+  const card=document.getElementById('schedCard');
+  if(!card){ window.print(); return; }
+  const clone=card.cloneNode(true);
+  clone.querySelectorAll('#btnSchedPdf,.no-print').forEach(n=>n.remove());
+  clone.querySelectorAll('select').forEach(sel=>{
+    const opt=sel.querySelector('option[selected]'); const val=opt?opt.textContent.trim():'';
+    const c=document.createElement('div'); c.textContent=val; c.style.cssText='font-weight:700;text-align:center';
+    sel.parentNode.replaceChild(c,sel);
+  });
+  const css=Array.from(document.querySelectorAll('style')).map(s=>s.textContent).join('\n');
+  const extra='@page{size:A4 landscape;margin:8mm} html,body{background:#fff;margin:0;padding:10px}'+
+    ' .card{box-shadow:none!important;border:none!important;margin:0!important}'+
+    ' .scroll{overflow:visible!important} .sched th,.sched td,.sched .nm{position:static!important}'+
+    ' .ch .hint{display:none} .sched{font-size:10px} .sched th,.sched td{padding:3px 3px}'+
+    ' .sched .nm{min-width:84px}';
+  const title='排班表_'+DB.schedule.year+pad2(DB.schedule.month);
+  const doc='<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><title>'+title+
+    '</title><style>'+css+'\n'+extra+'</style></head><body>'+clone.outerHTML+'</body></html>';
+  openPrint(doc);
+}
+function stepYear(delta){
+  DB.schedule.year=Math.min(2100,Math.max(2025,(Number(DB.schedule.year)||2026)+delta));
+  save(); render(); const el=document.getElementById('topYear'); if(el) el.focus();
+}
+function stepMonth(delta){
+  let m=(Number(DB.schedule.month)||1)+delta, y=Number(DB.schedule.year)||2026;
+  if(m>12){ m=1; y=Math.min(2100,y+1); }
+  if(m<1){ m=12; y=Math.max(2025,y-1); }
+  DB.schedule.month=m; DB.schedule.year=y;
+  save(); render(); const el=document.getElementById('topMonth'); if(el) el.focus();
+}
+document.getElementById('topYear').onchange=e=>{ DB.schedule.year=Math.min(2100,Math.max(2025,Number(e.target.value)||DB.schedule.year)); save(); render(); };
+document.getElementById('topMonth').onchange=e=>{ let v=Number(e.target.value)||DB.schedule.month; v=Math.min(12,Math.max(1,v)); DB.schedule.month=v; save(); render(); };
+document.getElementById('topYear').addEventListener('keydown',e=>{ if(e.key==='ArrowUp'){e.preventDefault();stepYear(1);} else if(e.key==='ArrowDown'){e.preventDefault();stepYear(-1);} });
+document.getElementById('topMonth').addEventListener('keydown',e=>{ if(e.key==='ArrowUp'){e.preventDefault();stepMonth(1);} else if(e.key==='ArrowDown'){e.preventDefault();stepMonth(-1);} });
+document.getElementById('yearUp').onclick=()=>stepYear(1);
+document.getElementById('yearDn').onclick=()=>stepYear(-1);
+document.getElementById('monUp').onclick=()=>stepMonth(1);
+document.getElementById('monDn').onclick=()=>stepMonth(-1);
+/* ---- robust backup: modal with download + clipboard + manual copy/paste fallbacks ---- */
+function closeOv(){ const o=document.getElementById('ov'); if(o) o.remove(); }
+function openOv(inner){
+  closeOv();
+  const o=document.createElement('div'); o.id='ov'; o.className='ov';
+  o.innerHTML='<div class="box">'+inner+'</div>';
+  o.addEventListener('click',e=>{ if(e.target===o) closeOv(); });
+  document.body.appendChild(o);
+  return o;
+}
+function confirmModal(title,msgHTML,okLabel,onOk){
+  openOv(
+    '<button class="x" id="cfX">&times;</button>'+
+    '<h3>'+esc(title)+'</h3>'+
+    '<p>'+msgHTML+'</p>'+
+    '<div class="row">'+
+      '<button class="btn" id="cfNo" style="flex:1;justify-content:center">取消</button>'+
+      '<button class="btn cfdanger" id="cfYes" style="flex:1;justify-content:center">'+esc(okLabel)+'</button>'+
+    '</div>'
+  );
+  document.getElementById('cfX').onclick=closeOv;
+  document.getElementById('cfNo').onclick=closeOv;
+  document.getElementById('cfYes').onclick=()=>{ closeOv(); onOk(); };
+}
+/* 匯出／匯入功能已移除 */
+
+/* ============================== AUTH GATE ============================== */
+function checkAdmin(user,pass){ return (DB.admins||[]).some(a=>a.user===user && a.pass===pass); }
+let isAdmin=false;
+function boot(){
+  const gate=document.getElementById('gate'), app=document.getElementById('adminApp');
+  if(isAdmin){ gate.style.display='none'; app.style.display='flex'; render(); }
+  else{
+    app.style.display='none'; gate.style.display='block';
+    // 前台開啟時先拉雲端最新（同仁名單與班表），再顯示；打卡後 save() 會自動上傳
     if(WORKER_URL){ pullFromCloud().then(()=>renderGate()); } else renderGate();
   }
 }
