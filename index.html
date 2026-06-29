@@ -615,8 +615,13 @@ function renderGate(){
 function manualOpts(sel){ const s=(sel===''||sel==null)?'':String(sel); let o='<option value=""'+(s===''?' selected':'')+'>—（自動）</option>'; let found=false; for(let i=1;i<=24;i++){ const v=String(i/2); const on=(s===v); if(on) found=true; o+='<option value="'+v+'"'+(on?' selected':'')+'>'+v+' 小時</option>'; } if(s!=='' && !found){ o+='<option value="'+esc(s)+'" selected>'+esc(s)+' 小時（自訂）</option>'; } return o; }
 function rerenderPunch(){ const y=window.scrollY||window.pageYOffset||0; const old=document.getElementById('punchBody'); const ow=old&&old.closest?old.closest('.scroll'):null; const x=ow?ow.scrollLeft:0; viewPunch(); window.scrollTo(0,y); const nw=document.getElementById('punchBody'); const wrap=nw&&nw.closest?nw.closest('.scroll'):null; if(wrap) wrap.scrollLeft=x; }
 function refreshPunchRow(i){ const p=DB.punches[i]; if(!p) return; const tr=document.querySelector('#punchBody tr[data-i="'+i+'"]'); if(!tr) return; const h=punchHours(p), ot=punchOT(p), hol=punchHol(p); const td=tr.children; if(td[9]) td[9].innerHTML=h; if(td[10]) td[10].innerHTML=(ot?'<span class="badge b-warn">'+ot+'</span>':'0'); if(td[11]) td[11].innerHTML=(hol?'<span class="badge b-bad">'+hol+'</span>':'0'); }
+let punchSort='date_asc';
 function viewPunch(){
-  const rows=DB.punches.map((p,i)=>{
+  let order=DB.punches.map((p,i)=>({p,i}));
+  if(punchSort==='date_asc') order.sort((a,b)=>(a.p.date||'').localeCompare(b.p.date||'')||(a.i-b.i));
+  else if(punchSort==='date_desc') order.sort((a,b)=>(b.p.date||'').localeCompare(a.p.date||'')||(b.i-a.i));
+  else if(punchSort==='staff') order.sort((a,b)=>(a.p.staff||'').localeCompare(b.p.staff||'')||(a.p.date||'').localeCompare(b.p.date||''));
+  const rows=order.map(({p,i})=>{
     const h=punchHours(p), ot=punchOT(p), hol=punchHol(p); const ho=isHoliday(p.date);
     const warnSt=['遲到','早退','遲到+早退'].includes(p.status);
     return '<tr data-i="'+i+'">'+
@@ -649,21 +654,27 @@ function viewPunch(){
     (!DB.staff.length?'<div class="note" style="background:var(--warn-bg);border-color:#f3d8a6;color:var(--warn)"><b>⚠️ 尚未建立任何行政同仁。</b>　請先到「參數總控台 → 區塊一」新增同仁。</div>':'')+
     '<div class="note">上下班時間欄位可<b>直接點選時間</b>（點一下跳出選擇器，也可鍵入），需要時也可<b>留白</b>（只上半天就只填一段）。「最終工時」優先採用主管覆核欄；選「—（自動）」才以打卡時間計算。當日若為國定假日，全部工時計入<b>國定假日工時</b>。</div>'+
     statsCard+
-    '<div class="card"><div class="ch"><h3>打卡明細</h3><div class="spacer"></div><span class="hint">薪資結算只計 '+DB.schedule.year+'/'+pad2(DB.schedule.month)+'</span>'+saveBtnHTML('savePunch')+'</div>'+
+    '<div class="card"><div class="ch"><h3>打卡明細</h3><div class="spacer"></div><span class="hint" style="margin-right:8px">排序</span><select id="punchSortSel" class="cell-in" style="width:auto;padding:6px 8px;margin-right:10px">'+[['date_asc','日期（舊→新）'],['date_desc','日期（新→舊）'],['staff','依員工'],['manual','建立順序']].map(o=>'<option value="'+o[0]+'" '+(punchSort===o[0]?'selected':'')+'>'+o[1]+'</option>').join('')+'</select><span class="hint" style="margin-right:10px">只計 '+DB.schedule.year+'/'+pad2(DB.schedule.month)+'</span>'+saveBtnHTML('savePunch')+'</div>'+
     '<div class="cb flush scroll"><table class="tbl"><thead><tr><th>日期</th><th>員工</th><th>班別</th><th>上班1</th><th>下班1</th><th>上班2</th><th>下班2</th><th class="num">覆核</th><th>考勤狀態</th><th class="num">最終工時</th><th class="num">平日加班</th><th class="num">國定假日</th><th></th></tr></thead><tbody id="punchBody">'+rows+'</tbody></table></div>'+
     '<div class="cb"><button class="addbtn" id="addPunch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>新增打卡</button></div></div>';
 
-  bindCells('punchBody',(i,k,val)=>{ DB.punches[i][k]=(k==='date')?String(val).trim().replace(/-/g,'/'):val; save(); if(k==='date'||k==='status') rerenderPunch(); else if(['in1','out1','in2','out2','manual'].includes(k)) refreshPunchRow(i); });
+  bindCells('punchBody',(i,k,val)=>{ DB.punches[i][k]=(k==='date')?String(val).trim().replace(/-/g,'/'):val; save(); if(k==='date'||k==='status'||k==='staff') rerenderPunch(); else if(['in1','out1','in2','out2','manual'].includes(k)) refreshPunchRow(i); });
+  const _ps=document.getElementById('punchSortSel'); if(_ps) _ps.onchange=()=>{ punchSort=_ps.value; rerenderPunch(); };
   delBtns('punchBody', i=>{ DB.punches.splice(i,1); save(); rerenderPunch(); });
   document.getElementById('addPunch').onclick=()=>{ DB.punches.push({id:id(),date:DB.schedule.year+'/'+pad2(DB.schedule.month)+'/01',staff:DB.staff[0]?DB.staff[0].name:'',shift:'A',in1:'',out1:'',in2:'',out2:'',manual:'',status:'正常'}); save(); rerenderPunch(); };
   wireSave('savePunch');
 }
 
 /* ===== BONUS ===== */
+let bonusSort='date_asc';
 function viewBonus(){
   const optList=['Google 5星好評'].concat(DB.products.map(p=>p.name));
   const prodOpts=sel=>optList.map(n=>'<option'+(n===sel?' selected':'')+'>'+esc(n)+'</option>').join('') + (sel && !optList.includes(sel) ? '<option selected>'+esc(sel)+'</option>' : '');
-  const rows=DB.bonuses.map((b,i)=>{
+  let order=DB.bonuses.map((b,i)=>({b,i}));
+  if(bonusSort==='date_asc') order.sort((x,y)=>(x.b.date||'').localeCompare(y.b.date||'')||(x.i-y.i));
+  else if(bonusSort==='date_desc') order.sort((x,y)=>(y.b.date||'').localeCompare(x.b.date||'')||(y.i-x.i));
+  else if(bonusSort==='staff') order.sort((x,y)=>(x.b.staff||'').localeCompare(y.b.staff||'')||(x.b.date||'').localeCompare(y.b.date||''));
+  const rows=order.map(({b,i})=>{
     const c=bonusCalc(b);
     return '<tr data-i="'+i+'">'+
       '<td><input type="date" class="cell-in" data-k="date" value="'+esc((b.date||'').replace(/\//g,'-'))+'" style="width:150px"></td>'+
@@ -679,10 +690,11 @@ function viewBonus(){
   }).join('') || '<tr><td colspan="10" class="empty">尚無獎金紀錄，點下方按鈕新增。</td></tr>';
   V().innerHTML=head('Incentives','商品與評論獎金明細','記錄同仁商品販售與 Google 五星好評推廣。每件獎勵金自動由「參數總控台」商品庫帶入。')+
     '<div class="note">「每件獎勵金」用商品名稱到參數庫查表 — 在參數總控台改價或新增商品，這裡<b>自動更新</b>。選「Google 5星好評」則以右側評論則數計獎。</div>'+
-    '<div class="card"><div class="ch"><h3>獎金明細</h3><div class="spacer"></div>'+saveBtnHTML('saveBonus')+'</div>'+
+    '<div class="card"><div class="ch"><h3>獎金明細</h3><div class="spacer"></div><span class="hint" style="margin-right:8px">排序</span><select id="bonusSortSel" class="cell-in" style="width:auto;padding:6px 8px;margin-right:10px">'+[['date_asc','日期（舊→新）'],['date_desc','日期（新→舊）'],['staff','依員工'],['manual','建立順序']].map(o=>'<option value="'+o[0]+'" '+(bonusSort===o[0]?'selected':'')+'>'+o[1]+'</option>').join('')+'</select>'+saveBtnHTML('saveBonus')+'</div>'+
     '<div class="cb flush scroll"><table class="tbl"><thead><tr><th>明細日期</th><th>員工</th><th>販售商品 / 推廣項目</th><th class="num">數量</th><th class="num">好評則數</th><th class="num">每件獎勵</th><th class="num">項目小計</th><th class="num">評論獎金</th><th class="num">當日總計</th><th></th></tr></thead><tbody id="bonusBody">'+rows+'</tbody></table></div>'+
     '<div class="cb"><button class="addbtn" id="addBonus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>新增獎金紀錄</button></div></div>';
   bindCells('bonusBody',(i,k,val)=>{ DB.bonuses[i][k]=(k==='qty'||k==='reviews')?(Number(val)||0):(k==='date'?String(val).trim().replace(/-/g,'/'):val); save(); keepScroll(viewBonus); });
+  const _bs=document.getElementById('bonusSortSel'); if(_bs) _bs.onchange=()=>{ bonusSort=_bs.value; keepScroll(viewBonus); };
   delBtns('bonusBody', i=>{ DB.bonuses.splice(i,1); save(); keepScroll(viewBonus); });
   document.getElementById('addBonus').onclick=()=>{ DB.bonuses.push({id:id(),date:DB.schedule.year+'/'+pad2(DB.schedule.month)+'/01',staff:DB.staff[0]?DB.staff[0].name:'',product:'Google 5星好評',qty:0,reviews:0}); save(); keepScroll(viewBonus); };
   wireSave('saveBonus');
