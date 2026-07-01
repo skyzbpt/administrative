@@ -617,7 +617,7 @@ function rerenderPunch(){ const y=window.scrollY||window.pageYOffset||0; const o
 function refreshPunchRow(i){ const p=DB.punches[i]; if(!p) return; const tr=document.querySelector('#punchBody tr[data-i="'+i+'"]'); if(!tr) return; const h=punchHours(p), ot=punchOT(p), hol=punchHol(p); const td=tr.children; if(td[9]) td[9].innerHTML=h; if(td[10]) td[10].innerHTML=(ot?'<span class="badge b-warn">'+ot+'</span>':'0'); if(td[11]) td[11].innerHTML=(hol?'<span class="badge b-bad">'+hol+'</span>':'0'); }
 let punchSort='date_asc';
 function viewPunch(){
-  let order=DB.punches.map((p,i)=>({p,i}));
+  let order=DB.punches.map((p,i)=>({p,i})).filter(({p})=>(p.date||'').startsWith(ymPrefix()));
   if(punchSort==='date_asc') order.sort((a,b)=>(a.p.date||'').localeCompare(b.p.date||'')||(a.i-b.i));
   else if(punchSort==='date_desc') order.sort((a,b)=>(b.p.date||'').localeCompare(a.p.date||'')||(b.i-a.i));
   else if(punchSort==='staff') order.sort((a,b)=>(a.p.staff||'').localeCompare(b.p.staff||'')||(a.p.date||'').localeCompare(b.p.date||''));
@@ -650,7 +650,7 @@ function viewPunch(){
     statsCard='<div class="card"><div class="ch"><h3>本月出勤異常統計</h3><span class="hint">'+DB.schedule.year+'/'+pad2(DB.schedule.month)+'</span></div><div class="cb flush scroll"><table class="tbl"><thead><tr><th>員工</th><th class="num">遲到</th><th class="num">早退</th><th class="num">遲到+早退</th><th class="num">缺勤異常</th><th class="num">異常合計</th></tr></thead><tbody>'+sr+'</tbody></table></div></div>';
   } else { statsCard='<div class="note" style="background:var(--ok-bg);border-color:#b9e6c9;color:var(--ok)">本月（'+DB.schedule.year+'/'+pad2(DB.schedule.month)+'）目前沒有遲到、早退、遲到+早退或缺勤異常的紀錄。</div>'; }
 
-  V().innerHTML=head('Time Clock','每日打卡紀錄表','輸入四段打卡時間自動算工時；或於「主管覆核」欄直接填時數覆蓋。遲到／早退／遲到+早退標紅底警示並於上方統計各員次數。國定假日工時自動歸入假日加倍。')+
+  V().innerHTML=head('Time Clock','每日打卡紀錄表','本頁僅顯示上方所選月份（'+DB.schedule.year+' 年 '+DB.schedule.month+' 月）的打卡，切換月份即切換該月資料。輸入四段打卡時間自動算工時；或於「主管覆核」欄直接填時數覆蓋。遲到／早退／遲到+早退標紅底警示並於上方統計各員次數。國定假日工時自動歸入假日加倍。')+
     (!DB.staff.length?'<div class="note" style="background:var(--warn-bg);border-color:#f3d8a6;color:var(--warn)"><b>⚠️ 尚未建立任何行政同仁。</b>　請先到「參數總控台 → 區塊一」新增同仁。</div>':'')+
     '<div class="note">上下班時間欄位可<b>直接點選時間</b>（點一下跳出選擇器，也可鍵入），需要時也可<b>留白</b>（只上半天就只填一段）。「最終工時」優先採用主管覆核欄；選「—（自動）」才以打卡時間計算。當日若為國定假日，全部工時計入<b>國定假日工時</b>。</div>'+
     statsCard+
@@ -670,7 +670,7 @@ let bonusSort='date_asc';
 function viewBonus(){
   const optList=['Google 5星好評'].concat(DB.products.map(p=>p.name));
   const prodOpts=sel=>optList.map(n=>'<option'+(n===sel?' selected':'')+'>'+esc(n)+'</option>').join('') + (sel && !optList.includes(sel) ? '<option selected>'+esc(sel)+'</option>' : '');
-  let order=DB.bonuses.map((b,i)=>({b,i}));
+  let order=DB.bonuses.map((b,i)=>({b,i})).filter(({b})=>(b.date||'').startsWith(ymPrefix()));
   if(bonusSort==='date_asc') order.sort((x,y)=>(x.b.date||'').localeCompare(y.b.date||'')||(x.i-y.i));
   else if(bonusSort==='date_desc') order.sort((x,y)=>(y.b.date||'').localeCompare(x.b.date||'')||(y.i-x.i));
   else if(bonusSort==='staff') order.sort((x,y)=>(x.b.staff||'').localeCompare(y.b.staff||'')||(x.b.date||'').localeCompare(y.b.date||''));
@@ -688,7 +688,7 @@ function viewBonus(){
       '<td class="num ro tnum" style="vertical-align:middle">'+fmt(c.total)+'</td>'+
       '<td><button class="del" data-del="'+i+'">&times;</button></td></tr>';
   }).join('') || '<tr><td colspan="10" class="empty">尚無獎金紀錄，點下方按鈕新增。</td></tr>';
-  V().innerHTML=head('Incentives','商品與評論獎金明細','記錄同仁商品販售與 Google 五星好評推廣。每件獎勵金自動由「參數總控台」商品庫帶入。')+
+  V().innerHTML=head('Incentives','商品與評論獎金明細','本頁僅顯示上方所選月份（'+DB.schedule.year+' 年 '+DB.schedule.month+' 月）的獎金，切換月份即切換該月資料。記錄同仁商品販售與 Google 五星好評推廣。每件獎勵金自動由「參數總控台」商品庫帶入。')+
     '<div class="note">「每件獎勵金」用商品名稱到參數庫查表 — 在參數總控台改價或新增商品，這裡<b>自動更新</b>。選「Google 5星好評」則以右側評論則數計獎。</div>'+
     '<div class="card"><div class="ch"><h3>獎金明細</h3><div class="spacer"></div><span class="hint" style="margin-right:8px">排序</span><select id="bonusSortSel" class="cell-in" style="width:auto;padding:6px 8px;margin-right:10px">'+[['date_asc','日期（舊→新）'],['date_desc','日期（新→舊）'],['staff','依員工'],['manual','建立順序']].map(o=>'<option value="'+o[0]+'" '+(bonusSort===o[0]?'selected':'')+'>'+o[1]+'</option>').join('')+'</select>'+saveBtnHTML('saveBonus')+'</div>'+
     '<div class="cb flush scroll"><table class="tbl"><thead><tr><th>明細日期</th><th>員工</th><th>販售商品 / 推廣項目</th><th class="num">數量</th><th class="num">好評則數</th><th class="num">每件獎勵</th><th class="num">項目小計</th><th class="num">評論獎金</th><th class="num">當日總計</th><th></th></tr></thead><tbody id="bonusBody">'+rows+'</tbody></table></div>'+
